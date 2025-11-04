@@ -21,16 +21,6 @@ public class CarService {
         this.users = users;
     }
 
-    @Transactional
-    public Car addForUser(UUID userId, Car car) {
-        if (cars.existsByUserIdAndVin(userId, car.getVin())) {
-            throw new IllegalStateException("VIN already exists for user");
-        }
-        User user = users.findById(userId).orElseThrow(NoSuchElementException::new);
-        car.setUser(user);
-        return cars.save(car);
-    }
-
     public List<Car> listForUser(UUID userId) {
         return cars.findAllByUserId(userId);
     }

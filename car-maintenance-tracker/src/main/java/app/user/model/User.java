@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,6 +27,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String profilePicture;
+
     @NotBlank
     @Column(nullable = false)
     private String email;
@@ -36,4 +40,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column( nullable = false)
     private Set<UserRole> roles;
+
+    @Column(nullable = false)
+    private LocalDateTime createdOn;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedOn;
+
+
 }

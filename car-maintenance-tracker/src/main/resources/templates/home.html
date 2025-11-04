@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Maintenance Tracker • Dashboard</title>
+    <style>
+        :root {
+            --bg: #0a0f1a;
+            --card: #0f172a;
+            --card-hover: #1a2332;
+            --muted: #94a3b8;
+            --text: #e5e7eb;
+            --primary: #22d3ee;
+            --primary-dark: #06b6d4;
+            --primary-2: #a78bfa;
+            --accent: #34d399;
+            --border: #1e293b;
+            --border-light: #334155;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        body {
+            margin: 0;
+            background: 
+                radial-gradient(ellipse 120% 80% at 0% 0%, rgba(167,139,250,0.1), transparent 50%),
+                radial-gradient(ellipse 100% 70% at 100% 100%, rgba(34,211,238,0.08), transparent 50%),
+                var(--bg);
+            color: var(--text);
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: -0.02em;
+        }
+        .brand svg {
+            width: 28px;
+            height: 28px;
+            filter: drop-shadow(0 0 8px rgba(34,211,238,0.5));
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .nav-links a:hover {
+            color: var(--text);
+            background: rgba(255,255,255,0.05);
+        }
+        .nav-links a.active {
+            color: var(--primary);
+            background: rgba(34,211,238,0.1);
+        }
+        .nav-links a.primary {
+            color: #0a0f1a;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(34,211,238,0.3);
+        }
+        .nav-links a.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(34,211,238,0.4);
+        }
+        .wrap {
+            max-width: 1400px;
+            margin: 32px auto;
+            padding: 0 32px;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 24px;
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--border-light);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+        }
+        .card .hd {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+            background: rgba(255,255,255,0.02);
+        }
+        .card .bd {
+            padding: 24px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 1200px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 720px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .stat {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-2));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .stat:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+        }
+        .stat:hover::before {
+            transform: scaleX(1);
+        }
+        .stat small {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .stat b {
+            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+        .list {
+            display: grid;
+            gap: 12px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+        .item:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--border-light);
+            transform: translateX(4px);
+        }
+        .item-content {
+            flex: 1;
+        }
+        .item-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .item .meta {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .tag {
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: rgba(34,211,238,0.1);
+            color: var(--primary);
+            border-radius: 9999px;
+            padding: 6px 12px;
+            white-space: nowrap;
+        }
+        .side {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .quick {
+            display: grid;
+            gap: 12px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #0a0f1a;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(34,211,238,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34,211,238,0.4);
+        }
+        .btn.alt {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--border);
+            box-shadow: none;
+        }
+        .btn.alt:hover {
+            background: rgba(34,211,238,0.1);
+            border-color: var(--primary);
+        }
+        .note {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        @media (max-width: 1080px) {
+            .wrap {
+                grid-template-columns: 1fr;
+            }
+            .nav {
+                padding: 16px 24px;
+            }
+            .nav-links {
+                gap: 4px;
+            }
+            .nav-links a {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+        }
+        @media (max-width: 640px) {
+            .wrap {
+                padding: 0 20px;
+                margin: 20px auto;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+            }
+            .card .hd {
+                padding: 16px 20px;
+            }
+            .card .bd {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+</head>
+<body>
+    <header class="nav">
+        <div class="brand">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#22d3ee" d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+            </svg>
+            Car Maintenance Tracker
+        </div>
+        <nav class="nav-links">
+            <a href="/home" class="active">Home</a>
+            <a href="/cars">Cars</a>
+            <a href="/maintenance">Maintenance</a>
+            <a href="/logout" class="primary">Logout</a>
+        </nav>
+    </header>
+
+    <main class="wrap">
+        <section class="main">
+            <div class="card">
+                <div class="hd">Overview</div>
+                <div class="bd">
+                    <div class="grid">
+                        <div class="stat">
+                            <small>Total Cars</small>
+                            <b>2</b>
+                        </div>
+                        <div class="stat">
+                            <small>Upcoming Services</small>
+                            <b>3</b>
+                        </div>
+                        <div class="stat">
+                            <small>Monthly Cost</small>
+                            <b>$120</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 24px">
+                <div class="hd">Recent Maintenance</div>
+                <div class="bd">
+                    <div class="list">
+                        <div class="item">
+                            <div class="item-content">
+                                <div class="item-title">Oil change — Audi A4</div>
+                                <div class="meta">2025-10-12 • 120,000 km</div>
+                            </div>
+                            <span class="tag">$85</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-content">
+                                <div class="item-title">Brake pads — BMW 320d</div>
+                                <div class="meta">2025-10-02 • 98,500 km</div>
+                            </div>
+                            <span class="tag">$140</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-content">
+                                <div class="item-title">Tires rotation — VW Golf 7</div>
+                                <div class="meta">2025-09-22 • 76,000 km</div>
+                            </div>
+                            <span class="tag">$30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="side">
+            <div class="card">
+                <div class="hd">Quick Actions</div>
+                <div class="bd">
+                    <div class="quick">
+                        <a href="/cars/new" class="btn">Add a car</a>
+                        <a href="/maintenance/new" class="btn">Log maintenance</a>
+                        <a href="/maintenance/upcoming" class="btn alt">View upcoming</a>
+                    </div>
+                    <div class="note">Keep your maintenance logs up to date for accurate reminders and better cost tracking.</div>
+                </div>
+            </div>
+        </aside>
+    </main>
+</body>
+</html>
+
+
