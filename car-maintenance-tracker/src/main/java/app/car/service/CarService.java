@@ -2,35 +2,57 @@ package app.car.service;
 
 import app.car.model.Car;
 import app.car.repository.CarRepository;
+import app.exception.DomainException;
 import app.user.model.User;
 import app.user.repository.UserRepository;
+
+import java.time.YearMonth;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+
+
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CarService {
-    private final CarRepository cars;
+    private final CarRepository carRepository;
     private final UserRepository users;
 
     public CarService(CarRepository cars, UserRepository users) {
-        this.cars = cars;
+        this.carRepository = cars;
         this.users = users;
     }
 
-    public List<Car> listForUser(UUID userId) {
-        return cars.findAllByUserId(userId);
+
+    public List<Car> getCarsForUser(User user) {
+
+        return carRepository.findAllByUserId(user.getId());
     }
 
-    public Optional<Car> get(UUID userId, UUID carId) {
-        return cars.findByIdAndUserId(carId, userId);
+    public int getLatestAdditions(List<Car> cars) {
+
+        int count = 0;
+
+        for (Car car:cars) {
+
+            boolean isLastMonth = YearMonth.from(car.getJoinedAt()).equals(YearMonth.now().minusMonths(1));
+
+            if (isLastMonth){
+
+                count++;
+            }
+
+        }
+
+        return count;
     }
 
-    @Transactional
-    public void delete(UUID userId, UUID carId) {
-        cars.deleteByIdAndUserId(carId, userId);
+    public void createCar(Car car, User user) {
+
+        if (car.getBrand().isBlank() || car.getModel().isBlank() || car.getVin().isBlank()){
+            throw DomainException.blankEntities();
+        }
+
+        car.setUser(user);
+        carRepository.save(car);
     }
 }

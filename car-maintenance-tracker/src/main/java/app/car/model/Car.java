@@ -3,6 +3,9 @@ package app.car.model;
 import app.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -22,7 +25,7 @@ public class Car {
     private User user;
 
     @Column(nullable = false)
-    private String make;
+    private String brand;
 
     @Column(nullable = false)
     private String model;
@@ -38,4 +41,8 @@ public class Car {
     @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("date DESC")
     private Set<app.maintenance.model.Maintenance> maintenances = new LinkedHashSet<>();
+
+    @CreationTimestamp
+    @Column(updatable = false,nullable = false)
+    private LocalDateTime joinedAt;
 }

@@ -51,10 +51,10 @@ public class ProfileController {
         User user = userService.getById(userData.getUserId());
 
         if (bindingResult.hasErrors()) {
-            ModelAndView mv = new ModelAndView("profile");
-            mv.addObject("user", user);
-            mv.addObject("editProfileRequest", editProfileRequest);
-            return mv;
+            ModelAndView modelAndView = new ModelAndView("profile");
+            modelAndView.addObject("user", user);
+            modelAndView.addObject("editProfileRequest", editProfileRequest);
+            return modelAndView;
         }
 
         try {
