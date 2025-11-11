@@ -1,15 +1,17 @@
 package app.user.service;
 
 import app.exception.DomainException;
+import app.exception.ValidationException;
 import app.user.model.User;
 import app.user.model.UserRole;
 import app.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import app.web.dto.LoginRequest;
+import app.web.dto.EditProfileRequest;
 import app.web.dto.RegisterRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,24 +37,31 @@ public class UserService {
     @Transactional
     public void createNewUser(RegisterRequest registerRequest) {
 
+        List<String> errors = new ArrayList<>();
+
         if (!registerRequest.getPassword().equals(registerRequest.getRepeatPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
+            errors.add("Passwords do not match");
         }
 
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new IllegalArgumentException("Username is already taken");
+            errors.add("Username is already taken");
         }
 
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new IllegalArgumentException("Email is already in use");
+            errors.add("Email is already taken");
         }
+
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+
 
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .email(registerRequest.getEmail())
                 .enabled(true)
-                .profilePicture("")
+                .profilePictureUrl("")
                 .roles(java.util.Set.of(UserRole.USER))
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
@@ -61,19 +70,20 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User login(LoginRequest loginRequest) {
+    public void updateProfile(User user, EditProfileRequest request) {
 
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(()
-                -> DomainException.userNotFound(loginRequest.getUsername()));
+        user.setUsername(request.getUsername());
 
-        String rawPassword = loginRequest.getPassword();
-        String encodedPassword = user.getPassword();
+        user.setEmail(request.getEmail());
 
-        if (!passwordEncoder.matches(rawPassword,encodedPassword)){
-
-            throw DomainException.invalidData();
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
+            throw DomainException.invalidPassword();
         }
 
-        return user;
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+
+        user.setUpdatedOn(LocalDateTime.now());
+        userRepository.save(user);
     }
 }

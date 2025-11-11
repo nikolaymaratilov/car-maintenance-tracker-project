@@ -55,7 +55,11 @@
                 <div class="subtitle">Get started with smart car maintenance tracking</div>
             </div>
             <form class="form" th:action="@{/register}" th:method="POST" th:object="${registerRequest}">
-                <div class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+                <div class="error-message" th:if="${errorList}">
+                    <ul>
+                        <li th:each="err : ${errorList}" th:text="${err}"></li>
+                    </ul>
+                </div>
                 <div class="field">
                     <label for="username">Username</label>
                     <input id="username" name="username" type="text" placeholder="Enter your username" th:field="*{username}">
@@ -89,5 +93,6 @@
     </div>
 </body>
 </html>
+
 
 

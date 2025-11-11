@@ -27,8 +27,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String profilePicture;
+    @Column
+    private String profilePictureUrl;
 
     @NotBlank
     @Column(nullable = false)

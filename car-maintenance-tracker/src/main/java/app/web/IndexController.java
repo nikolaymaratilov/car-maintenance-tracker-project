@@ -1,5 +1,7 @@
 package app.web;
 
+import app.exception.DomainException;
+import app.exception.ValidationException;
 import app.security.UserData;
 import app.user.model.User;
 import app.user.service.UserService;
@@ -54,11 +56,11 @@ public class IndexController {
             userService.createNewUser(registerRequest);
             return new ModelAndView("redirect:/login");
         }
-        catch (IllegalArgumentException e) {
+        catch (ValidationException e) {
             ModelAndView modelAndView = new ModelAndView("/register");
             modelAndView.addObject("registerRequest", registerRequest);
 
-            modelAndView.addObject("errorMessage", e.getMessage());
+            modelAndView.addObject("errorList", e.getErrors());
             return modelAndView;
         }
     }
