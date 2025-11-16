@@ -2,8 +2,12 @@ package app.web;
 
 import app.car.model.Car;
 import app.car.service.CarService;
+import app.maintenance.model.Maintenance;
+import app.maintenance.model.MaintenanceType;
+import app.maintenance.service.MaintenanceService;
 import app.exception.DomainException;
 import app.security.UserData;
+import app.maintenance.service.MaintenanceService;
 import app.user.model.User;
 import app.user.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,10 +33,12 @@ public class CarsController {
 
     private final UserService userService;
     private final CarService carService;
+    private final MaintenanceService maintenanceService;
 
-    public CarsController(UserService userService, CarService carService) {
+    public CarsController(UserService userService, CarService carService, MaintenanceService maintenanceService) {
         this.userService = userService;
         this.carService = carService;
+        this.maintenanceService = maintenanceService;
     }
 
     @GetMapping("/cars")
@@ -64,6 +70,7 @@ public class CarsController {
         modelAndView.addObject("brand",brand);
         modelAndView.addObject("model",model);
         modelAndView.addObject("search",search);
+        modelAndView.addObject("upcomingMaintenances", maintenanceService.upcomingForUser(user));
 
         return modelAndView;
     }
@@ -108,5 +115,21 @@ public class CarsController {
         User user = userService.getById(userData.getUserId());
         carService.deleteCar(carId, user);
         return new ModelAndView("redirect:/cars");
+    }
+
+    @GetMapping("/cars/{carId}")
+    public ModelAndView getCarDetails(@AuthenticationPrincipal UserData userData,
+                                      @PathVariable UUID carId) {
+        User user = userService.getById(userData.getUserId());
+        Car car = carService.getCarForUser(carId, user);
+        List<Maintenance> maintenances = maintenanceService.listForCar(carId);
+
+        ModelAndView modelAndView = new ModelAndView("car-details");
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("car", car);
+        modelAndView.addObject("maintenances", maintenances);
+        modelAndView.addObject("types", MaintenanceType.values());
+
+        return modelAndView;
     }
 }

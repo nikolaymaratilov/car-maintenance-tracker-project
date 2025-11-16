@@ -36,8 +36,6 @@ public class Car {
     @Column(nullable = false)
     private String vin;
 
-    private long version;
-
     @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("date DESC")
     private Set<app.maintenance.model.Maintenance> maintenances = new LinkedHashSet<>();

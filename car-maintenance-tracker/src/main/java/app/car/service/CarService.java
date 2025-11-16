@@ -9,6 +9,7 @@ import app.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class CarService {
     public void createCar(Car car, User user) {
 
         if (car.getBrand().isBlank() || car.getModel().isBlank() || car.getVin().isBlank()){
-            throw DomainException.blankEntities();
+            throw DomainException.blankEntitiesForCars();
         }
 
         car.setUser(user);
@@ -80,6 +81,11 @@ public class CarService {
     @Transactional
     public void deleteCar(UUID carId, User user) {
         carRepository.deleteByIdAndUserId(carId, user.getId());
+    }
+
+    public Car getCarForUser(UUID carId, User user) {
+        return carRepository.findByIdAndUserId(carId, user.getId())
+                .orElseThrow(NoSuchElementException::new);
     }
 
 }

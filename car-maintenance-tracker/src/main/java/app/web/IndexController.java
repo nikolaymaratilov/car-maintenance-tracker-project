@@ -1,6 +1,7 @@
 package app.web;
 
-import app.exception.DomainException;
+import app.car.model.Car;
+import app.car.service.CarService;
 import app.exception.ValidationException;
 import app.security.UserData;
 import app.user.model.User;
@@ -17,16 +18,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.UUID;
+import java.util.List;
 
 @Controller
 public class IndexController {
 
     private final UserService userService;
+    private final CarService carService;
 
     @Autowired
-    public IndexController(UserService userService) {
+    public IndexController(UserService userService, CarService carService) {
         this.userService = userService;
+        this.carService = carService;
     }
 
     @GetMapping
@@ -83,9 +86,12 @@ public class IndexController {
     public ModelAndView getHomePage(@AuthenticationPrincipal UserData userData){
 
         User user = userService.getById(userData.getUserId());
+        List<Car> cars = carService.getCarsForUser(user);
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("home");
         modelAndView.addObject("user",user);
+        modelAndView.addObject("cars",cars);
         return modelAndView;
     }
 }
