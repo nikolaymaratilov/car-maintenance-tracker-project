@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CarRepository extends JpaRepository<Car, UUID> {
-    List<Car> findAllByUserId(UUID userId);
-    void deleteByIdAndUserId(UUID id, UUID userId);
+    List<Car> findAllByUserIdAndDeletedFalse(UUID userId);
+    Optional<Car> findByIdAndUserIdAndDeletedFalse(UUID id, UUID userId);
     Optional<Car> findByIdAndUserId(UUID id, UUID userId);
 }

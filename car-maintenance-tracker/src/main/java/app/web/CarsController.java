@@ -19,14 +19,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.UUID;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Controller
 public class CarsController {
@@ -48,17 +44,13 @@ public class CarsController {
                                 @RequestParam(required = false) String search){
 
         User user = userService.getById(userData.getUserId());
-
         List<Car> cars = carService.getCarsForUser(user);
         int countOfLatestAdditions = carService.getLatestAdditions(cars);
-        Map<String, Set<String>> brandModels = cars.stream()
-                .collect(Collectors.groupingBy(Car::getBrand,Collectors.mapping(Car::getModel,Collectors.toSet())));
-        List<Car> filteredCars = carService.filterCars(
-                user,
-                brand,
-                model,
-                search
-        );
+        Map<String, Set<String>> brandModels = carService.getBrandModelsMap(cars);
+        List<Car> filteredCars = carService.filterCars(user, brand, model, search);
+        Map<UUID, Integer> maintenanceCounts = carService.getMaintenanceCountsMap(cars, maintenanceService);
+        List<app.maintenance.model.Maintenance> upcomingNext30Days = maintenanceService.upcomingNext30Days(user);
+        long serviceReadyCount = maintenanceService.getServiceReadyCount(user);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("cars");
@@ -70,7 +62,9 @@ public class CarsController {
         modelAndView.addObject("brand",brand);
         modelAndView.addObject("model",model);
         modelAndView.addObject("search",search);
-        modelAndView.addObject("upcomingMaintenances", maintenanceService.upcomingForUser(user));
+        modelAndView.addObject("maintenanceCounts", maintenanceCounts);
+        modelAndView.addObject("serviceReadyCount", serviceReadyCount);
+        modelAndView.addObject("upcomingMaintenances", upcomingNext30Days);
 
         return modelAndView;
     }
@@ -131,5 +125,42 @@ public class CarsController {
         modelAndView.addObject("types", MaintenanceType.values());
 
         return modelAndView;
+    }
+
+    @GetMapping("/cars/{carId}/edit")
+    public ModelAndView editCarForm(@AuthenticationPrincipal UserData userData,
+                                    @PathVariable UUID carId) {
+        User user = userService.getById(userData.getUserId());
+        Car car = carService.getCarForUser(carId, user);
+
+        ModelAndView modelAndView = new ModelAndView("edit-car");
+        modelAndView.addObject("car", car);
+
+        return modelAndView;
+    }
+
+    @PutMapping("/cars/{carId}")
+    public ModelAndView updateCar(@AuthenticationPrincipal UserData userData,
+                                  @PathVariable UUID carId,
+                                  @ModelAttribute("car") Car car,
+                                  BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            ModelAndView modelAndView = new ModelAndView("edit-car");
+            modelAndView.addObject("car", car);
+            return modelAndView;
+        }
+
+        User user = userService.getById(userData.getUserId());
+
+        try {
+            carService.updateCar(carId, user, car);
+            return new ModelAndView("redirect:/cars/" + carId);
+        } catch (DomainException e) {
+            ModelAndView modelAndView = new ModelAndView("edit-car");
+            modelAndView.addObject("car", car);
+            modelAndView.addObject("errorMessage", e.getMessage());
+            return modelAndView;
+        }
     }
 }

@@ -50,6 +50,7 @@
             </div>
             <div class="page-actions">
                 <a href="/cars" class="btn ghost small">Back to garage</a>
+                <a class="btn ghost small" th:href="@{'/cars/' + ${car.id} + '/edit'}">Edit car</a>
             </div>
         </div>
 

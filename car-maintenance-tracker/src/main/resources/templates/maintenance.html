@@ -110,7 +110,9 @@
         <section class="maintenance-list">
             <p th:if="${#lists.isEmpty(maintenances)}">No maintenance records yet. Log your first service to get started.</p>
 
-            <article class="maintenance-card" th:each="m : ${maintenances}">
+            <article class="maintenance-card" 
+                     th:classappend="${m.car != null and m.car.deleted ? 'deleted-car' : ''}"
+                     th:each="m : ${maintenances}">
                 <header class="maintenance-header">
                     <div class="maintenance-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -137,7 +139,9 @@
                     </div>
                 </div>
                 <div class="maintenance-actions">
-                    <button class="btn ghost small">Edit</button>
+                    <a class="btn ghost small" 
+                       th:href="@{'/maintenance/' + ${m.id} + '/edit'}"
+                       th:if="${m.car == null or not m.car.deleted}">Edit</a>
                     <form th:action="@{'/maintenance/' + ${m.id}}" method="post" style="display: inline;">
                         <input type="hidden" name="_method" value="delete"/>
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

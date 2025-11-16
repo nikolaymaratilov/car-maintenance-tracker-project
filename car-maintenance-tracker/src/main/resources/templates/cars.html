@@ -73,9 +73,12 @@
                 <span th:text="${countOfLatestAdditions}" class="stat-value">2</span>
                 <span class="stat-hint">Added in the last 30 days</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" th:if="${serviceReadyCount > 0}">
                 <span class="stat-label">Service ready</span>
-                <span class="stat-value accent">1 car</span>
+                <span class="stat-value accent"
+                      th:text="${serviceReadyCount == 1 ? '1 car' : serviceReadyCount + ' cars'}">
+                    1 car
+                </span>
                 <span class="stat-hint">Needs attention soon</span>
             </div>
         </div>
@@ -155,12 +158,14 @@
                     </div>
                     <div>
                         <span class="meta-label">Maintenance logs</span>
-                        <span class="meta-value">4</span>
+                        <span class="meta-value"
+                              th:text="${maintenanceCounts[car.id] != null ? maintenanceCounts[car.id] : 0}">0</span>
                     </div>
                 </div>
 
                 <div class="car-actions">
                     <a class="btn ghost small" th:href="@{'/cars/' + ${car.id}}">View details</a>
+                    <a class="btn ghost small" th:href="@{'/cars/' + ${car.id} + '/edit'}">Edit car</a>
                     <form th:action="@{'/cars/' + ${car.id}}" method="post" style="display: inline;">
                         <input type="hidden" name="_method" value="delete"/>
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

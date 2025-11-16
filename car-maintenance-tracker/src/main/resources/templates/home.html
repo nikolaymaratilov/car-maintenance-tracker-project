@@ -57,14 +57,14 @@
                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" fill="#a78bfa"/>
                             </svg>
                             <small>Upcoming Services</small>
-                            <b>3</b>
+                            <b th:text="${upcomingMaintenance}">0</b>
                         </div>
                         <div class="stat">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#34d399"/>
                             </svg>
                             <small>Monthly Cost</small>
-                            <b>$120</b>
+                            <b th:text="${'$' + #numbers.formatDecimal(monthlyCost, 1, 2, 'POINT')}">$0.00</b>
                         </div>
                     </div>
                 </div>
@@ -73,46 +73,30 @@
             <div class="card" style="margin-top: 24px">
                 <div class="hd">Recent Maintenance</div>
                 <div class="bd">
-                    <div class="list">
-                        <div class="item">
+                    <div class="list" th:if="${#lists.size(recentMaintenances) > 0}">
+                        <div class="item" th:each="m, iterStat : ${recentMaintenances}">
                             <div style="width: 40px; height: 40px; background: rgba(34,211,238,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0;">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#22d3ee"/>
+                                    <path fill="#22d3ee" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                                 </svg>
                             </div>
                             <div class="item-content">
-                                <div class="item-title">Oil change — Audi A4</div>
-                                <div class="meta">2025-10-12 • 120,000 km</div>
+                                <div class="item-title">
+                                    <span th:if="${m.car != null}"
+                                          th:text="${m.car.brand + ' ' + m.car.model}"></span>
+                                </div>
+                                <div class="meta">
+                                    <span th:text="${#temporals.format(m.date, 'yyyy-MM-dd')}">2025-01-01</span>
+                                    <span th:if="${m.mileage > 0}" th:text="' • ' + ${#numbers.formatInteger(m.mileage, 1, 'COMMA')} + ' km'"> • 0 km</span>
+                                </div>
                             </div>
-                            <span class="tag">$85</span>
-                        </div>
-                        <div class="item">
-                            <div style="width: 40px; height: 40px; background: rgba(167,139,250,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="12" r="8" stroke="#a78bfa" stroke-width="2" fill="none"/>
-                                    <path d="M12 4v8l6 4" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                            </div>
-                            <div class="item-content">
-                                <div class="item-title">Brake pads — BMW 320d</div>
-                                <div class="meta">2025-10-02 • 98,500 km</div>
-                            </div>
-                            <span class="tag">$140</span>
-                        </div>
-                        <div class="item">
-                            <div style="width: 40px; height: 40px; background: rgba(52,211,153,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="12" r="10" fill="none" stroke="#34d399" stroke-width="2"/>
-                                    <path d="M12 2v4M12 18v4M22 12h-4M6 12H2" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                            </div>
-                            <div class="item-content">
-                                <div class="item-title">Tires rotation — VW Golf 7</div>
-                                <div class="meta">2025-09-22 • 76,000 km</div>
-                            </div>
-                            <span class="tag">$30</span>
+                            <span class="tag" th:if="${m.cost != null}" th:text="${'$' + #numbers.formatDecimal(m.cost, 1, 2, 'POINT')}">$0</span>
+                            <span class="tag" th:if="${m.cost == null}">—</span>
                         </div>
                     </div>
+                    <p th:if="${#lists.isEmpty(recentMaintenances)}" style="color: var(--muted); padding: 16px;">
+                        No maintenance records yet. Log your first service to get started.
+                    </p>
                 </div>
             </div>
         </section>
@@ -123,26 +107,9 @@
                 <div class="bd">
                     <div class="quick">
                         <a href="/new-car" class="btn">Add a car</a>
-                        <a href="/maintenance/new" class="btn">Log maintenance</a>
-                        <a href="/maintenance/upcoming" class="btn alt">View upcoming</a>
+                        <a href="/new-maintenance" class="btn">Log maintenance</a>
                     </div>
-                    <div style="text-align: center; margin: 16px 0; opacity: 0.6;">
-                        <svg width="80" height="40" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="homeCarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.8"/>
-                                    <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.8"/>
-                                </linearGradient>
-                            </defs>
-                            <path d="M30 50 Q 30 40, 40 40 L 70 40 Q 80 40, 90 50 L 150 50 Q 160 50, 170 60 L 180 70 L 180 80 Q 180 90, 170 90 L 150 90 L 80 90 L 40 90 Q 30 90, 30 80 L 30 70 Q 30 60, 40 50 Z" 
-                                  fill="url(#homeCarGrad)" stroke="#22d3ee" stroke-width="1.5"/>
-                            <path d="M90 50 Q 95 47, 100 50 L 140 50 Q 145 47, 150 50 L 150 70 Q 145 73, 140 70 L 100 70 Q 95 73, 90 70 Z" 
-                                  fill="#0a0f1a" opacity="0.5"/>
-                            <circle cx="70" cy="90" r="12" fill="#1e293b" stroke="#22d3ee" stroke-width="1"/>
-                            <circle cx="150" cy="90" r="12" fill="#1e293b" stroke="#22d3ee" stroke-width="1"/>
-                            <ellipse cx="170" cy="60" rx="5" ry="8" fill="#fff" opacity="0.8"/>
-                        </svg>
-                    </div>
+                    <div style="height: 16px;"></div>
                     <div class="note">Keep your maintenance logs up to date for accurate reminders and better cost tracking.</div>
                 </div>
             </div>

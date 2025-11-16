@@ -31,12 +31,15 @@ public class Car {
     private String model;
 
     @Column(nullable = false)
+    private boolean deleted = false;
+
+    @Column(nullable = false)
     private Integer year;
 
     @Column(nullable = false)
     private String vin;
 
-    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "car")
     @OrderBy("date DESC")
     private Set<app.maintenance.model.Maintenance> maintenances = new LinkedHashSet<>();
 

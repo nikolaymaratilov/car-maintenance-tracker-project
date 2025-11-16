@@ -3,14 +3,16 @@ package app.car.service;
 import app.car.model.Car;
 import app.car.repository.CarRepository;
 import app.exception.DomainException;
+import app.maintenance.service.MaintenanceService;
 import app.user.model.User;
-import app.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +27,7 @@ public class CarService {
 
 
     public List<Car> getCarsForUser(User user) {
-
-        return carRepository.findAllByUserId(user.getId());
+        return carRepository.findAllByUserIdAndDeletedFalse(user.getId());
     }
 
     public int getLatestAdditions(List<Car> cars) {
@@ -80,12 +81,44 @@ public class CarService {
 
     @Transactional
     public void deleteCar(UUID carId, User user) {
-        carRepository.deleteByIdAndUserId(carId, user.getId());
+        Car car = getCarForUser(carId, user);
+        car.setDeleted(true);
+        carRepository.save(car);
     }
 
     public Car getCarForUser(UUID carId, User user) {
-        return carRepository.findByIdAndUserId(carId, user.getId())
+        return carRepository.findByIdAndUserIdAndDeletedFalse(carId, user.getId())
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    @Transactional
+    public void updateCar(UUID carId, User user, Car updated) {
+        Car existing = getCarForUser(carId, user);
+
+        if (updated.getBrand().isBlank() || updated.getModel().isBlank() || updated.getVin().isBlank()) {
+            throw DomainException.blankEntitiesForCars();
+        }
+
+        existing.setBrand(updated.getBrand());
+        existing.setModel(updated.getModel());
+        existing.setYear(updated.getYear());
+        existing.setVin(updated.getVin());
+    }
+
+    public Map<String, Set<String>> getBrandModelsMap(List<Car> cars) {
+        return cars.stream()
+                .collect(Collectors.groupingBy(
+                        Car::getBrand,
+                        Collectors.mapping(Car::getModel, Collectors.toSet())
+                ));
+    }
+
+    public Map<UUID, Integer> getMaintenanceCountsMap(List<Car> cars, MaintenanceService maintenanceService) {
+        return cars.stream()
+                .collect(Collectors.toMap(
+                        Car::getId,
+                        car -> maintenanceService.countForCar(car.getId())
+                ));
     }
 
 }

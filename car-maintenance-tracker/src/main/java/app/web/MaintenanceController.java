@@ -8,8 +8,8 @@ import app.maintenance.service.MaintenanceService;
 import app.security.UserData;
 import app.user.model.User;
 import app.user.service.UserService;
+
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -46,21 +47,11 @@ public class MaintenanceController {
                                            @RequestParam(required = false) String search){
 
         User user = userService.getById(userData.getUserId());
-
         List<Maintenance> maintenances = maintenanceService.filterForUser(user, carId, type, search);
-        List<Maintenance> upcomingMaintenances = maintenanceService.upcomingForUser(user);
-
+        List<Maintenance> upcomingNext30Days = maintenanceService.upcomingNext30Days(user);
         int totalRecords = maintenances.size();
-
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        long thisMonthCount = maintenances.stream()
-                .filter(m -> m.getDate() != null && !m.getDate().isBefore(firstDayOfMonth))
-                .count();
-
-        BigDecimal totalSpent = maintenances.stream()
-                .filter(m -> m.getCost() != null)
-                .map(Maintenance::getCost)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        long thisMonthCount = maintenanceService.getThisMonthCount(maintenances);
+        BigDecimal totalSpent = maintenanceService.getTotalSpent(maintenances);
 
         ModelAndView modelAndView = new ModelAndView("maintenance");
         modelAndView.addObject("user",user);
@@ -73,7 +64,7 @@ public class MaintenanceController {
         modelAndView.addObject("selectedCarId", carId);
         modelAndView.addObject("selectedType", type);
         modelAndView.addObject("search", search);
-        modelAndView.addObject("upcomingMaintenances", upcomingMaintenances);
+        modelAndView.addObject("upcomingMaintenances", upcomingNext30Days);
 
         return modelAndView;
     }
@@ -143,5 +134,51 @@ public class MaintenanceController {
         });
 
         return new ModelAndView("redirect:/maintenance");
+    }
+
+    @GetMapping("/maintenance/{maintenanceId}/edit")
+    public ModelAndView editMaintenanceForm(@AuthenticationPrincipal UserData userData,
+                                            @PathVariable UUID maintenanceId) {
+        User user = userService.getById(userData.getUserId());
+        Maintenance maintenance = maintenanceService.getForUser(maintenanceId, user);
+
+        ModelAndView modelAndView = new ModelAndView("edit-maintenance");
+        modelAndView.addObject("maintenance", maintenance);
+        modelAndView.addObject("cars", carService.getCarsForUser(user));
+        modelAndView.addObject("types", MaintenanceType.values());
+
+        return modelAndView;
+    }
+
+    @PutMapping("/maintenance/{maintenanceId}")
+    public ModelAndView updateMaintenance(@AuthenticationPrincipal UserData userData,
+                                          @PathVariable UUID maintenanceId,
+                                          @ModelAttribute("maintenance") Maintenance maintenance,
+                                          BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            User user = userService.getById(userData.getUserId());
+
+            ModelAndView modelAndView = new ModelAndView("edit-maintenance");
+            modelAndView.addObject("maintenance", maintenance);
+            modelAndView.addObject("cars", carService.getCarsForUser(user));
+            modelAndView.addObject("types", MaintenanceType.values());
+            return modelAndView;
+        }
+
+        User user = userService.getById(userData.getUserId());
+
+        try {
+            maintenanceService.update(maintenanceId, user, maintenance);
+            return new ModelAndView("redirect:/maintenance");
+        } catch (DomainException e) {
+            ModelAndView modelAndView = new ModelAndView("edit-maintenance");
+            modelAndView.addObject("maintenance", maintenance);
+            modelAndView.addObject("cars", carService.getCarsForUser(user));
+            modelAndView.addObject("types", MaintenanceType.values());
+            modelAndView.addObject("errorMessage", e.getMessage());
+
+            return modelAndView;
+        }
     }
 }

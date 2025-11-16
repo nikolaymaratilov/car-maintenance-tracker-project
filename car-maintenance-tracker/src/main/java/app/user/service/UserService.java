@@ -73,17 +73,26 @@ public class UserService {
     public void updateProfile(User user, EditProfileRequest request) {
 
         user.setUsername(request.getUsername());
-
         user.setEmail(request.getEmail());
 
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
-            throw DomainException.invalidPassword();
+        boolean wantsToChangePassword =
+                request.getNewPassword() != null && !request.getNewPassword().isBlank();
+
+        if (wantsToChangePassword) {
+
+            if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()) {
+                throw new DomainException("You must enter your current password to set a new password.");
+            }
+
+            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                throw DomainException.invalidPassword();
+            }
+
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         }
-
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-
 
         user.setUpdatedOn(LocalDateTime.now());
         userRepository.save(user);
     }
+
 }

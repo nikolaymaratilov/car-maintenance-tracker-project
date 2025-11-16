@@ -13,4 +13,5 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, UUID> 
     List<Maintenance> findAllByCarUserIdOrderByDateDesc(UUID userId);
     Optional<Maintenance> findByIdAndCarId(UUID id, UUID carId);
     void deleteByIdAndCarId(UUID id, UUID carId);
+    int countByCarId(UUID carId);
 }

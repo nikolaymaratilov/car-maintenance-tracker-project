@@ -1,7 +1,6 @@
 package app.web.dto;
 
-import jakarta.annotation.Nullable;
-import jakarta.persistence.Column;
+import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -14,19 +13,18 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor
 public class EditProfileRequest {
 
-   @Size(min = 6,max = 12, message = "Username length must be between 6 and 26 symbols")
+    @Size(min = 6, max = 26, message = "Username length must be between 6 and 26 symbols")
     private String username;
 
-    @Email
+    @Email(message = "Invalid email format")
     private String email;
 
-    @Size(min = 6,max = 12,message = "Password length must be between 6 and 12 symbols")
+    @Nullable
     private String currentPassword;
 
-   @Size(min = 6,max = 12,message = "Password length must be between 6 and 12 symbols")
+    @Nullable
     private String newPassword;
 
-    @URL
+    @URL(message = "Invalid URL format")
     private String profilePictureUrl;
-
 }
