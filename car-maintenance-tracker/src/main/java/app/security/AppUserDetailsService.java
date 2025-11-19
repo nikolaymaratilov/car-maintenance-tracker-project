@@ -1,14 +1,14 @@
 package app.security;
 
+import app.exception.DomainException;
 import app.user.model.User;
 import app.user.model.UserRole;
 import app.user.repository.UserRepository;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 public class AppUserDetailsService implements UserDetailsService {
@@ -24,8 +24,7 @@ public class AppUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        Set<UserRole> roles = user.getRoles();
-        UserRole role = roles.isEmpty() ? UserRole.USER : roles.iterator().next();
+        UserRole role = user.getRole() != null ? user.getRole() : UserRole.USER;
 
         return new UserData(
                 user.getId(),
@@ -35,4 +34,5 @@ public class AppUserDetailsService implements UserDetailsService {
                 user.isEnabled()
         );
     }
+
 }

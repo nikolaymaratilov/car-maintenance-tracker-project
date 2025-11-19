@@ -1,5 +1,6 @@
 package app.car.model;
 
+import app.maintenance.model.Maintenance;
 import app.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,7 +42,7 @@ public class Car {
 
     @OneToMany(mappedBy = "car")
     @OrderBy("date DESC")
-    private Set<app.maintenance.model.Maintenance> maintenances = new LinkedHashSet<>();
+    private Set<Maintenance> maintenances = new LinkedHashSet<>();
 
     @CreationTimestamp
     @Column(updatable = false,nullable = false)

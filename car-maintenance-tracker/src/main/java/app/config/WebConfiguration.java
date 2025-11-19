@@ -2,6 +2,7 @@ package app.config;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,8 +29,16 @@ public class WebConfiguration implements WebMvcConfigurer {
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
+                        .failureHandler((request, response, exception) -> {
+                            if (exception instanceof DisabledException) {
+                                response.sendRedirect("/login?disabled=true");
+                            } else {
+                                response.sendRedirect("/login?error=true");
+                            }
+                        })
+
+
                         .defaultSuccessUrl("/home",true)
-                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout

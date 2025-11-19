@@ -564,6 +564,108 @@ body {
     color: var(--muted);
 }
 
+.car-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.3s ease;
+}
+
+.detail-row:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    transform: translateX(4px);
+}
+
+.detail-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.detail-year .detail-icon {
+    background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(34,211,238,0.1));
+    color: var(--primary);
+    border: 1px solid rgba(34,211,238,0.3);
+}
+
+.detail-year:hover .detail-icon {
+    background: linear-gradient(135deg, rgba(34,211,238,0.3), rgba(34,211,238,0.15));
+    box-shadow: 0 4px 12px rgba(34,211,238,0.25);
+}
+
+.detail-vin .detail-icon {
+    background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(167,139,250,0.1));
+    color: var(--primary-2);
+    border: 1px solid rgba(167,139,250,0.3);
+}
+
+.detail-vin:hover .detail-icon {
+    background: linear-gradient(135deg, rgba(167,139,250,0.3), rgba(167,139,250,0.15));
+    box-shadow: 0 4px 12px rgba(167,139,250,0.25);
+}
+
+.detail-owner .detail-icon {
+    background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.1));
+    color: var(--accent);
+    border: 1px solid rgba(52,211,153,0.3);
+}
+
+.detail-owner:hover .detail-icon {
+    background: linear-gradient(135deg, rgba(52,211,153,0.3), rgba(52,211,153,0.15));
+    box-shadow: 0 4px 12px rgba(52,211,153,0.25);
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.detail-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
+.detail-year .detail-value {
+    color: var(--primary);
+}
+
+.detail-vin .detail-value {
+    color: var(--primary-2);
+}
+
+.detail-owner .detail-value {
+    color: var(--accent);
+}
+
 .car-info {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

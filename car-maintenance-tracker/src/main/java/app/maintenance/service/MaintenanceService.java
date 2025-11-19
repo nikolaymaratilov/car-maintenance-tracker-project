@@ -186,5 +186,8 @@ public class MaintenanceService {
     }
 
 
+    public List<Maintenance> getAll() {
 
+        return maintenanceRepository.findAll();
+    }
 }

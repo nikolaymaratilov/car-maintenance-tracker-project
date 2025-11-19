@@ -120,5 +120,8 @@ public class CarService {
                         car -> maintenanceService.countForCar(car.getId())
                 ));
     }
+    public List<Car> getAll() {
 
+        return carRepository.findAll();
+    }
 }

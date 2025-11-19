@@ -109,6 +109,11 @@
                         <a href="/new-car" class="btn">Add a car</a>
                         <a href="/new-maintenance" class="btn">Log maintenance</a>
                     </div>
+                    <div th:if="${user.getRole().getDisplayName() == 'Admin'}" style="margin-top: 12px;">
+                        <a href="/dashboard" class="btn" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1)); border: 1.5px solid #8b5cf6; color: #a78bfa; font-weight: 600;">
+                            Admin Dashboard
+                        </a>
+                    </div>
                     <div style="height: 16px;"></div>
                     <div class="note">Keep your maintenance logs up to date for accurate reminders and better cost tracking.</div>
                 </div>

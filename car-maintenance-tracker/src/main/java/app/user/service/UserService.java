@@ -6,6 +6,7 @@ import app.user.model.User;
 import app.user.model.UserRole;
 import app.user.repository.UserRepository;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class UserService {
                 .email(registerRequest.getEmail())
                 .enabled(true)
                 .profilePictureUrl("")
-                .roles(java.util.Set.of(UserRole.USER))
+                .role(UserRole.USER)
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
@@ -95,4 +96,50 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public ArrayList<Integer> getAllUsers() {
+
+        List<User> users = userRepository.findAll();
+
+        int usersCount = 0;
+        int adminsCount = 0;
+
+        for (User user:users) {
+            if (user.getRole().getDisplayName().equals("User")){
+                usersCount++;
+            }
+            else {
+                adminsCount++;
+            }
+        }
+
+        ArrayList<Integer> usersAndAdminsCount = new ArrayList<>();
+        usersAndAdminsCount.add(0,usersCount);
+        usersAndAdminsCount.add(1,adminsCount);
+
+        return usersAndAdminsCount;
+    }
+
+    public List<User> getAllUsersList() {
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public void switchRole(UUID userId) {
+        User user = getById(userId);
+        if (user.getRole() == UserRole.ADMIN) {
+            user.setRole(UserRole.USER);
+        } else {
+            user.setRole(UserRole.ADMIN);
+        }
+        user.setUpdatedOn(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void switchStatus(UUID userId) {
+        User user = getById(userId);
+        user.setEnabled(!user.isEnabled());
+        user.setUpdatedOn(LocalDateTime.now());
+        userRepository.save(user);
+    }
 }

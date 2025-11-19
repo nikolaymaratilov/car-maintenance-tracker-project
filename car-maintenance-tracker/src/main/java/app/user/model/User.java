@@ -39,7 +39,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column( nullable = false)
-    private Set<UserRole> roles;
+    private UserRole role;
 
     @Column(nullable = false)
     private LocalDateTime createdOn;

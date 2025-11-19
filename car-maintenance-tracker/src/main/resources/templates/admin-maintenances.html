@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Maintenances • Admin</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/maintenance.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+</head>
+<body>
+    <header class="nav">
+        <div class="brand">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#22d3ee" d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+            </svg>
+            Car Maintenance Tracker
+        </div>
+        <div class="welcome-container">
+            <a href="/dashboard" class="edit-profile-btn">Back to Dashboard</a>
+        </div>
+        <nav class="nav-links">
+            <a href="/home">Home</a>
+            <a href="/cars">Cars</a>
+            <a href="/maintenance">Maintenance</a>
+            <a href="/dashboard" class="active">Admin</a>
+            <a href="/logout" class="primary">Logout</a>
+        </nav>
+    </header>
+
+    <main class="layout">
+        <section class="content">
+            <div class="page-header">
+                <div>
+                    <h1>All Maintenances</h1>
+                    <p>View and manage all maintenance records in the system</p>
+                </div>
+            </div>
+
+            <section class="maintenance-list" style="margin-top: 24px">
+                <p th:if="${#lists.isEmpty(maintenances)}" style="color: var(--muted); padding: 16px;">
+                    No maintenance records found in the system.
+                </p>
+
+                <article class="maintenance-card" 
+                         th:classappend="${m.car != null and m.car.deleted ? 'deleted-car' : ''}"
+                         th:each="m : ${maintenances}">
+                    <header class="maintenance-header">
+                        <div class="maintenance-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#22d3ee"/>
+                            </svg>
+                        </div>
+                        <div class="maintenance-info">
+                            <div class="maintenance-title">
+                                <span class="maintenance-type" th:text="${#strings.replace(m.type.name(), '_', ' ')}">Type</span>
+                                <span class="maintenance-car" th:text="${m.car != null ? (m.car.brand + ' ' + m.car.model) : 'No car'}">Car name</span>
+                            </div>
+                            <div class="maintenance-meta">
+                                <span th:text="${m.date}">2025-01-01</span>
+                                <span>•</span>
+                                <span th:text="${m.mileage + ' km'}">0 km</span>
+                                <span th:if="${m.car != null and m.car.user != null}">•</span>
+                                <span th:if="${m.car != null and m.car.user != null}" th:text="${'Owner: ' + m.car.user.username}">Owner</span>
+                            </div>
+                        </div>
+                        <div class="maintenance-cost" th:text="${m.cost != null ? '$' + m.cost : '-'}">$0</div>
+                    </header>
+                    <div class="maintenance-details">
+                        <p th:text="${m.description != null ? m.description : 'No description'}">Description</p>
+                        <div class="maintenance-tags" th:if="${m.nextDueDate != null}">
+                            <span class="tag" th:text="${'Next: ' + m.nextDueDate}">Next date</span>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </section>
+    </main>
+</body>
+</html>
+

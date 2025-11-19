@@ -74,13 +74,17 @@ public class IndexController {
     }
 
     @GetMapping("/login")
-    public ModelAndView getLoginPage(@RequestParam (name= "loginAttemptMessage",required = false) String message,@RequestParam (name= "error",required = false) String errorMessage){
+    public ModelAndView getLoginPage(@RequestParam (name= "loginAttemptMessage",required = false) String message,
+                                     @RequestParam (name= "error",required = false) String errorMessage,
+                                     @RequestParam (name= "disabled",required = false) boolean disabled){
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
         modelAndView.addObject("loginRequest",new LoginRequest());
         modelAndView.addObject("loginAttemptMessage",message);
-        if (errorMessage != null){
+        if (disabled){
+            modelAndView.addObject("errorMessage","This account has been disabled and access is temporarily unavailable.");
+        } else if (errorMessage != null){
             modelAndView.addObject("errorMessage","Invalid username or password");
         }
 
