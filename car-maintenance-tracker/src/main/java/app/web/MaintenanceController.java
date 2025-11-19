@@ -75,10 +75,7 @@ public class MaintenanceController {
 
         User user = userService.getById(userData.getUserId());
 
-        Maintenance maintenance = new Maintenance();
-        if (carId != null) {
-            maintenance.setCar(carService.getCarForUser(carId, user));
-        }
+        Maintenance maintenance = maintenanceService.prepareNewMaintenanceForm(user, carId);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("new-maintenance");
@@ -104,6 +101,7 @@ public class MaintenanceController {
             return modelAndView;
         }
 
+        //todo
         try {
             maintenanceService.createMaintenance(maintenance);
             return new ModelAndView("redirect:/maintenance");
@@ -126,12 +124,7 @@ public class MaintenanceController {
                                           @PathVariable UUID maintenanceId) {
         User user = userService.getById(userData.getUserId());
 
-        maintenanceService.getById(maintenanceId).ifPresent(m -> {
-            if (m.getCar() != null && m.getCar().getUser() != null
-                    && m.getCar().getUser().getId().equals(user.getId())) {
-                maintenanceService.delete(m.getCar().getId(), maintenanceId);
-            }
-        });
+        maintenanceService.deleteMaintenanceForUser(maintenanceId, user);
 
         return new ModelAndView("redirect:/maintenance");
     }
@@ -168,6 +161,7 @@ public class MaintenanceController {
 
         User user = userService.getById(userData.getUserId());
 
+        //todo
         try {
             maintenanceService.update(maintenanceId, user, maintenance);
             return new ModelAndView("redirect:/maintenance");

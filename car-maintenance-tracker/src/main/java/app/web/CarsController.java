@@ -7,7 +7,6 @@ import app.maintenance.model.MaintenanceType;
 import app.maintenance.service.MaintenanceService;
 import app.exception.DomainException;
 import app.security.UserData;
-import app.maintenance.service.MaintenanceService;
 import app.user.model.User;
 import app.user.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -90,18 +89,9 @@ public class CarsController {
 
         User user = userService.getById(userData.getUserId());
 
-        try {
             carService.createCar(car,user);
             return new ModelAndView("redirect:/cars");
 
-        } catch (DomainException e){
-            ModelAndView modelAndView = new ModelAndView("new-car");
-            modelAndView.addObject("car",car);
-
-            modelAndView.addObject("errorMessage",e.getMessage());
-
-            return  modelAndView;
-        }
     }
 
     @DeleteMapping("/cars/{carId}")
@@ -162,5 +152,6 @@ public class CarsController {
             modelAndView.addObject("errorMessage", e.getMessage());
             return modelAndView;
         }
+        //todo
     }
 }

@@ -6,7 +6,6 @@ import app.user.model.User;
 import app.user.model.UserRole;
 import app.user.repository.UserRepository;
 
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,4 +141,16 @@ public class UserService {
         user.setUpdatedOn(LocalDateTime.now());
         userRepository.save(user);
     }
+
+    public String resolveLoginMessage(String loginAttemptMessage, String error, boolean disabled) {
+
+        if (disabled) {
+            return "This account has been disabled and access is temporarily unavailable.";
+        }
+        if (error != null) {
+            return "Invalid username or password";
+        }
+        return loginAttemptMessage;
+    }
+
 }

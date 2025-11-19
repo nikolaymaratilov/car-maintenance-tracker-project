@@ -57,6 +57,7 @@ public class ProfileController {
             return modelAndView;
         }
 
+        //todo
         try {
             userService.updateProfile(user, editProfileRequest);
         } catch (DomainException e) {

@@ -55,22 +55,14 @@ public class IndexController {
     public ModelAndView register(@Valid RegisterRequest registerRequest, BindingResult bindingResult){
 
         if (bindingResult.hasErrors()){
-            ModelAndView modelAndView = new ModelAndView("/register");
+            ModelAndView modelAndView = new ModelAndView("register");
             modelAndView.addObject("registerRequest", registerRequest);
             return modelAndView;
         }
 
-        try {
-            userService.createNewUser(registerRequest);
-            return new ModelAndView("redirect:/login");
-        }
-        catch (ValidationException e) {
-            ModelAndView modelAndView = new ModelAndView("/register");
-            modelAndView.addObject("registerRequest", registerRequest);
+        userService.createNewUser(registerRequest);
 
-            modelAndView.addObject("errorList", e.getErrors());
-            return modelAndView;
-        }
+        return new ModelAndView("redirect:/login");
     }
 
     @GetMapping("/login")
@@ -82,12 +74,12 @@ public class IndexController {
         modelAndView.setViewName("login");
         modelAndView.addObject("loginRequest",new LoginRequest());
         modelAndView.addObject("loginAttemptMessage",message);
-        if (disabled){
-            modelAndView.addObject("errorMessage","This account has been disabled and access is temporarily unavailable.");
-        } else if (errorMessage != null){
-            modelAndView.addObject("errorMessage","Invalid username or password");
-        }
 
+        String finalMessage = userService.resolveLoginMessage(message, errorMessage, disabled);
+
+        if (finalMessage != null) {
+            modelAndView.addObject("errorMessage", finalMessage);
+        }
         return modelAndView;
     }
 

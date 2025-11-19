@@ -2,6 +2,7 @@ package app.maintenance.service;
 
 import app.car.model.Car;
 import app.car.repository.CarRepository;
+import app.car.service.CarService;
 import app.exception.DomainException;
 import app.maintenance.model.Maintenance;
 import app.maintenance.repository.MaintenanceRepository;
@@ -23,9 +24,12 @@ public class MaintenanceService {
     private final MaintenanceRepository maintenanceRepository;
     private final CarRepository cars;
 
-    public MaintenanceService(MaintenanceRepository maintenances, CarRepository cars) {
+    private final CarService carService;
+
+    public MaintenanceService(MaintenanceRepository maintenances, CarRepository cars, CarService carService) {
         this.maintenanceRepository = maintenances;
         this.cars = cars;
+        this.carService = carService;
     }
 
     @Transactional
@@ -183,6 +187,30 @@ public class MaintenanceService {
                 .filter(java.util.Objects::nonNull)
                 .distinct()
                 .count();
+    }
+
+    public Maintenance prepareNewMaintenanceForm(User user, UUID carId) {
+
+        Maintenance maintenance = new Maintenance();
+
+        if (carId != null) {
+            maintenance.setCar(carService.getCarForUser(carId, user));
+        }
+
+        return maintenance;
+    }
+
+    @Transactional
+    public void deleteMaintenanceForUser(UUID maintenanceId, User user) {
+
+        maintenanceRepository.findById(maintenanceId).ifPresent(m -> {
+            if (m.getCar() != null &&
+                    m.getCar().getUser() != null &&
+                    m.getCar().getUser().getId().equals(user.getId())) {
+
+                delete(m.getCar().getId(), maintenanceId);
+            }
+        });
     }
 
 

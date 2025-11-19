@@ -4,16 +4,13 @@ import app.car.model.Car;
 import app.car.service.CarService;
 import app.maintenance.model.Maintenance;
 import app.maintenance.service.MaintenanceService;
-import app.security.UserData;
 import app.user.model.User;
 import app.user.service.UserService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,24 +68,18 @@ public class AdminController {
     }
 
     @PostMapping("/admin/users/{userId}/switch-role")
-    public String switchUserRole(@PathVariable UUID userId, RedirectAttributes redirectAttributes) {
-        try {
-            userService.switchRole(userId);
-            redirectAttributes.addFlashAttribute("success", "User role updated successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update user role: " + e.getMessage());
-        }
+    public String switchUserRole(@PathVariable UUID userId) {
+
+        userService.switchRole(userId);
+
         return "redirect:/admin-users";
     }
 
     @PostMapping("/admin/users/{userId}/switch-status")
-    public String switchUserStatus(@PathVariable UUID userId, RedirectAttributes redirectAttributes) {
-        try {
-            userService.switchStatus(userId);
-            redirectAttributes.addFlashAttribute("success", "User status updated successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update user status: " + e.getMessage());
-        }
+    public String switchUserStatus(@PathVariable UUID userId) {
+
+        userService.switchStatus(userId);
+
         return "redirect:/admin-users";
     }
 }
