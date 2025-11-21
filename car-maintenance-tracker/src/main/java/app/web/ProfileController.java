@@ -1,6 +1,6 @@
 package app.web;
 
-import app.exception.DomainException;
+import app.exception.ProfileUpdateException;
 import app.security.UserData;
 import app.user.model.User;
 import app.user.service.UserService;
@@ -31,13 +31,7 @@ public class ProfileController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("profile");
         modelAndView.addObject("user", user);
-
-        EditProfileRequest editProfileRequest = new EditProfileRequest();
-        editProfileRequest.setUsername(user.getUsername());
-        editProfileRequest.setEmail(user.getEmail());
-        editProfileRequest.setProfilePictureUrl(user.getProfilePictureUrl());
-
-        modelAndView.addObject("editProfileRequest", editProfileRequest);
+        modelAndView.addObject("editProfileRequest",new EditProfileRequest());
 
         return modelAndView;
     }
@@ -51,23 +45,13 @@ public class ProfileController {
         User user = userService.getById(userData.getUserId());
 
         if (bindingResult.hasErrors()) {
-            ModelAndView modelAndView = new ModelAndView("profile");
-            modelAndView.addObject("user", user);
-            modelAndView.addObject("editProfileRequest", editProfileRequest);
-            return modelAndView;
-        }
-
-        //todo
-        try {
-            userService.updateProfile(user, editProfileRequest);
-        } catch (DomainException e) {
-
             ModelAndView mv = new ModelAndView("profile");
             mv.addObject("user", user);
             mv.addObject("editProfileRequest", editProfileRequest);
-            mv.addObject("errorMessage", e.getMessage());
             return mv;
         }
+
+        userService.updateProfile(user, editProfileRequest);
 
         return new ModelAndView("redirect:/home");
     }

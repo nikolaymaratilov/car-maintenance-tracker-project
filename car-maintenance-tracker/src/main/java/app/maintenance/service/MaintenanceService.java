@@ -3,7 +3,8 @@ package app.maintenance.service;
 import app.car.model.Car;
 import app.car.repository.CarRepository;
 import app.car.service.CarService;
-import app.exception.DomainException;
+import app.exception.MaintenanceCreateException;
+import app.exception.MaintenanceUpdateException;
 import app.maintenance.model.Maintenance;
 import app.maintenance.repository.MaintenanceRepository;
 
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 import app.user.model.User;
@@ -30,13 +30,6 @@ public class MaintenanceService {
         this.maintenanceRepository = maintenances;
         this.cars = cars;
         this.carService = carService;
-    }
-
-    @Transactional
-    public Maintenance add(UUID carId, Maintenance maintenance) {
-        Car car = cars.findById(carId).orElseThrow(NoSuchElementException::new);
-        maintenance.setCar(car);
-        return maintenanceRepository.save(maintenance);
     }
 
     public List<Maintenance> listForCar(UUID carId) {
@@ -80,14 +73,6 @@ public class MaintenanceService {
                 .toList();
     }
 
-    public Optional<Maintenance> getById(UUID maintenanceId) {
-        return maintenanceRepository.findById(maintenanceId);
-    }
-
-    public Optional<Maintenance> get(UUID carId, UUID maintenanceId) {
-        return maintenanceRepository.findByIdAndCarId(maintenanceId, carId);
-    }
-
     @Transactional
     public void delete(UUID carId, UUID maintenanceId) {
         maintenanceRepository.deleteByIdAndCarId(maintenanceId, carId);
@@ -97,7 +82,7 @@ public class MaintenanceService {
 
         if (maintenance.getCar() == null || maintenance.getType() == null){
 
-            throw DomainException.blankEntitiesForMaintenance();
+            throw MaintenanceCreateException.blankEntitiesForMaintenance();
         }
 
         maintenanceRepository.save(maintenance);
@@ -116,25 +101,25 @@ public class MaintenanceService {
     }
 
     @Transactional
-    public void update(UUID maintenanceId, User user, Maintenance updated) {
+    public void update(UUID maintenanceId, User user, Maintenance updatedMaintenance) {
         Maintenance existing = getForUser(maintenanceId, user);
 
-        if (updated.getCar() == null || updated.getType() == null) {
-            throw DomainException.blankEntitiesForMaintenance();
+        if (updatedMaintenance.getCar() == null || updatedMaintenance.getType() == null) {
+            throw MaintenanceUpdateException.blankEntitiesForMaintenance(maintenanceId);
         }
 
-        if (updated.getCar().getId() != null) {
-            Car car = cars.findByIdAndUserId(updated.getCar().getId(), user.getId())
+        if (updatedMaintenance.getCar().getId() != null) {
+            Car car = cars.findByIdAndUserId(updatedMaintenance.getCar().getId(), user.getId())
                     .orElseThrow(NoSuchElementException::new);
             existing.setCar(car);
         }
 
-        existing.setDate(updated.getDate());
-        existing.setType(updated.getType());
-        existing.setMileage(updated.getMileage());
-        existing.setDescription(updated.getDescription());
-        existing.setCost(updated.getCost());
-        existing.setNextDueDate(updated.getNextDueDate());
+        existing.setDate(updatedMaintenance.getDate());
+        existing.setType(updatedMaintenance.getType());
+        existing.setMileage(updatedMaintenance.getMileage());
+        existing.setDescription(updatedMaintenance.getDescription());
+        existing.setCost(updatedMaintenance.getCost());
+        existing.setNextDueDate(updatedMaintenance.getNextDueDate());
     }
 
     public List<Maintenance> upcomingNext30Days(User user) {
@@ -212,7 +197,6 @@ public class MaintenanceService {
             }
         });
     }
-
 
     public List<Maintenance> getAll() {
 

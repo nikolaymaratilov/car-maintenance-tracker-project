@@ -2,7 +2,8 @@ package app.car.service;
 
 import app.car.model.Car;
 import app.car.repository.CarRepository;
-import app.exception.DomainException;
+import app.exception.CarCreateException;
+import app.exception.CarUpdateException;
 import app.maintenance.service.MaintenanceService;
 import app.user.model.User;
 
@@ -46,7 +47,7 @@ public class CarService {
     public void createCar(Car car, User user) {
 
         if (car.getBrand().isBlank() || car.getModel().isBlank() || car.getVin().isBlank()){
-            throw DomainException.blankEntitiesForCars();
+            throw CarCreateException.requiredFieldsForCar(car);
         }
 
         car.setUser(user);
@@ -92,17 +93,17 @@ public class CarService {
     }
 
     @Transactional
-    public void updateCar(UUID carId, User user, Car updated) {
+    public void updateCar(UUID carId, User user, Car updatedCar) {
         Car existing = getCarForUser(carId, user);
 
-        if (updated.getBrand().isBlank() || updated.getModel().isBlank() || updated.getVin().isBlank()) {
-            throw DomainException.blankEntitiesForCars();
+        if (updatedCar.getBrand().isBlank() || updatedCar.getModel().isBlank() || updatedCar.getVin().isBlank()) {
+            throw CarUpdateException.requiredFieldsForCar(carId);
         }
 
-        existing.setBrand(updated.getBrand());
-        existing.setModel(updated.getModel());
-        existing.setYear(updated.getYear());
-        existing.setVin(updated.getVin());
+        existing.setBrand(updatedCar.getBrand());
+        existing.setModel(updatedCar.getModel());
+        existing.setYear(updatedCar.getYear());
+        existing.setVin(updatedCar.getVin());
     }
 
     public Map<String, Set<String>> getBrandModelsMap(List<Car> cars) {

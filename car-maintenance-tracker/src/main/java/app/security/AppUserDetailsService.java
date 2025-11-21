@@ -1,10 +1,8 @@
 package app.security;
 
-import app.exception.DomainException;
 import app.user.model.User;
 import app.user.model.UserRole;
 import app.user.repository.UserRepository;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

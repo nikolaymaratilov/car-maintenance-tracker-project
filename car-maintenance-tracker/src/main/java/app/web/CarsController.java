@@ -5,7 +5,6 @@ import app.car.service.CarService;
 import app.maintenance.model.Maintenance;
 import app.maintenance.model.MaintenanceType;
 import app.maintenance.service.MaintenanceService;
-import app.exception.DomainException;
 import app.security.UserData;
 import app.user.model.User;
 import app.user.service.UserService;
@@ -89,14 +88,15 @@ public class CarsController {
 
         User user = userService.getById(userData.getUserId());
 
-            carService.createCar(car,user);
-            return new ModelAndView("redirect:/cars");
+        carService.createCar(car,user);
 
+        return new ModelAndView("redirect:/cars");
     }
 
     @DeleteMapping("/cars/{carId}")
     public ModelAndView deleteCar(@AuthenticationPrincipal UserData userData, @PathVariable UUID carId) {
         User user = userService.getById(userData.getUserId());
+
         carService.deleteCar(carId, user);
         return new ModelAndView("redirect:/cars");
     }
@@ -143,15 +143,8 @@ public class CarsController {
 
         User user = userService.getById(userData.getUserId());
 
-        try {
-            carService.updateCar(carId, user, car);
-            return new ModelAndView("redirect:/cars/" + carId);
-        } catch (DomainException e) {
-            ModelAndView modelAndView = new ModelAndView("edit-car");
-            modelAndView.addObject("car", car);
-            modelAndView.addObject("errorMessage", e.getMessage());
-            return modelAndView;
-        }
-        //todo
+        carService.updateCar(carId, user, car);
+
+        return new ModelAndView("redirect:/cars/" + carId);
     }
 }

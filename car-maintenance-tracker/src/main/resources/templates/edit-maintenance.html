@@ -54,13 +54,14 @@
               th:method="post"
               th:object="${maintenance}">
             <input type="hidden" name="_method" value="put"/>
-            <input type="hidden" name="_csrf" value="">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="hidden" th:field="*{id}"/>
 
             <div class="alert-warning" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
             <div class="field">
                 <label for="car">Car</label>
-                <select id="car" th:field="*{car.id}" required>
+                <select id="car" th:field="*{car.id}">
                     <option value="">Select a car</option>
                     <option th:each="car : ${cars}"
                             th:value="${car.id}"
@@ -75,12 +76,12 @@
                        name="date"
                        type="date"
                        th:value="${maintenance.date != null ? #temporals.format(maintenance.date, 'yyyy-MM-dd') : ''}"
-                       required>
+                       >
             </div>
 
             <div class="field">
                 <label for="type">Type</label>
-                <select id="type" th:field="*{type}" required>
+                <select id="type" th:field="*{type}" >
                     <option value="">Select type</option>
                     <option th:each="t : ${types}"
                             th:value="${t}"
@@ -91,7 +92,7 @@
 
             <div class="field">
                 <label for="mileage">Mileage</label>
-                <input id="mileage" th:field="*{mileage}" type="number" min="0" placeholder="50000" required>
+                <input id="mileage" th:field="*{mileage}" type="number" min="0" placeholder="50000">
             </div>
 
             <div class="field">

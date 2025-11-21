@@ -1,6 +1,6 @@
 package app.user.service;
 
-import app.exception.DomainException;
+import app.exception.ProfileUpdateException;
 import app.exception.ValidationException;
 import app.user.model.User;
 import app.user.model.UserRole;
@@ -81,11 +81,11 @@ public class UserService {
         if (wantsToChangePassword) {
 
             if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()) {
-                throw new DomainException("You must enter your current password to set a new password.");
+                throw new ProfileUpdateException("You must enter your current password to set a new password.", user, request);
             }
 
             if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-                throw DomainException.invalidPassword();
+                throw new ProfileUpdateException("Incorrect current password.", user, request);
             }
 
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));

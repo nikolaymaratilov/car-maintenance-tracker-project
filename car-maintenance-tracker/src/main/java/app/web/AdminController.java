@@ -71,7 +71,6 @@ public class AdminController {
     public String switchUserRole(@PathVariable UUID userId) {
 
         userService.switchRole(userId);
-
         return "redirect:/admin-users";
     }
 
@@ -79,7 +78,6 @@ public class AdminController {
     public String switchUserStatus(@PathVariable UUID userId) {
 
         userService.switchStatus(userId);
-
         return "redirect:/admin-users";
     }
 }

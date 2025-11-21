@@ -59,7 +59,7 @@
 
             <div class="field">
                 <label for="car">Car</label>
-                <select id="car" th:field="*{car}" required>
+                <select id="car" th:field="*{car}" >
                     <option value="">Select a car</option>
                     <option th:each="car : ${cars}"
                             th:value="${car.id}"
@@ -70,12 +70,12 @@
 
             <div class="field">
                 <label for="date">Date</label>
-                <input id="date" th:field="*{date}" type="date" required>
+                <input id="date" th:field="*{date}" type="date" >
             </div>
 
             <div class="field">
                 <label for="type">Type</label>
-                <select id="type" th:field="*{type}" required>
+                <select id="type" th:field="*{type}" >
                     <option value="">Select type</option>
                     <option th:each="t : ${types}"
                             th:value="${t}"
@@ -86,7 +86,7 @@
 
             <div class="field">
                 <label for="mileage">Mileage</label>
-                <input id="mileage" th:field="*{mileage}" type="number" min="0" placeholder="50000" required>
+                <input id="mileage" th:field="*{mileage}" type="number" min="0" placeholder="50000">
             </div>
 
             <div class="field">

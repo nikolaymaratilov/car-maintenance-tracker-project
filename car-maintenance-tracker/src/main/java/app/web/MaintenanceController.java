@@ -1,7 +1,6 @@
 package app.web;
 
 import app.car.service.CarService;
-import app.exception.DomainException;
 import app.maintenance.model.Maintenance;
 import app.maintenance.model.MaintenanceType;
 import app.maintenance.service.MaintenanceService;
@@ -101,22 +100,9 @@ public class MaintenanceController {
             return modelAndView;
         }
 
-        //todo
-        try {
-            maintenanceService.createMaintenance(maintenance);
-            return new ModelAndView("redirect:/maintenance");
+        maintenanceService.createMaintenance(maintenance);
 
-        } catch (DomainException e){
-            User user = userService.getById(userData.getUserId());
-
-            ModelAndView modelAndView = new ModelAndView("new-maintenance");
-            modelAndView.addObject("maintenance",maintenance);
-            modelAndView.addObject("cars", carService.getCarsForUser(user));
-            modelAndView.addObject("types", MaintenanceType.values());
-            modelAndView.addObject("errorMessage",e.getMessage());
-
-            return  modelAndView;
-        }
+        return new ModelAndView("redirect:/maintenance");
     }
 
     @DeleteMapping("/maintenance/{maintenanceId}")
@@ -149,6 +135,8 @@ public class MaintenanceController {
                                           @ModelAttribute("maintenance") Maintenance maintenance,
                                           BindingResult bindingResult) {
 
+        maintenance.setId(maintenanceId);
+
         if (bindingResult.hasErrors()) {
             User user = userService.getById(userData.getUserId());
 
@@ -161,18 +149,8 @@ public class MaintenanceController {
 
         User user = userService.getById(userData.getUserId());
 
-        //todo
-        try {
-            maintenanceService.update(maintenanceId, user, maintenance);
-            return new ModelAndView("redirect:/maintenance");
-        } catch (DomainException e) {
-            ModelAndView modelAndView = new ModelAndView("edit-maintenance");
-            modelAndView.addObject("maintenance", maintenance);
-            modelAndView.addObject("cars", carService.getCarsForUser(user));
-            modelAndView.addObject("types", MaintenanceType.values());
-            modelAndView.addObject("errorMessage", e.getMessage());
+        maintenanceService.update(maintenanceId, user, maintenance);
 
-            return modelAndView;
-        }
+        return new ModelAndView("redirect:/maintenance");
     }
 }
