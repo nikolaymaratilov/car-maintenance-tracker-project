@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${car.brand + ' ' + car.model}">Car details</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/cars.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+</head>
+<body>
+<header class="nav">
+    <div class="brand">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#22d3ee"
+                  d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+        </svg>
+        Car Maintenance Tracker
+    </div>
+    <div class="welcome-container">
+        <div class="user-avatar placeholder">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="4" stroke="#22d3ee" stroke-width="2" fill="none"/>
+                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"
+                      stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <button class="welcome-btn">
+            <span th:text="${user.username}">Username</span>
+        </button>
+        <a href="/profile" class="edit-profile-btn">Edit Profile</a>
+    </div>
+    <nav class="nav-links">
+        <a href="/home">Home</a>
+        <a href="/cars" class="active">Cars</a>
+        <a href="/maintenance">Maintenance</a>
+        <a href="/logout" class="primary">Logout</a>
+    </nav>
+</header>
+
+<main class="layout">
+    <section class="content">
+        <div class="page-header">
+            <div>
+                <h1 th:text="${car.brand + ' ' + car.model}">Car details</h1>
+                <p>Full maintenance history and metadata for this car.</p>
+            </div>
+            <div class="page-actions">
+                <a href="/cars" class="btn ghost small">Back to garage</a>
+                <a class="btn ghost small" th:href="@{'/cars/' + ${car.id} + '/edit'}">Edit car</a>
+            </div>
+        </div>
+
+        <section class="cars-grid sample">
+            <article class="car-card">
+                <header class="car-header">
+                    <div class="car-brand">
+                        <div class="car-avatar">
+                            <span th:text="${car.brand.substring(0,1)}">A</span>
+                        </div>
+                        <div>
+                            <span class="car-brand" th:text="${car.brand}">Audi</span>
+                            <span class="car-model" th:text="${car.model}">A4</span>
+                        </div>
+                    </div>
+                    <span class="status-tag">Active</span>
+                </header>
+
+                <div class="car-info">
+                    <div>
+                        <span class="meta-label">Year</span>
+                        <span class="meta-value" th:text="${car.year}">2020</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">VIN</span>
+                        <span class="meta-value" th:text="${car.vin}">VIN123</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Joined garage</span>
+                        <span class="meta-value" th:text="${#temporals.format(car.joinedAt, 'dd MMM yyyy')}">
+                            01 Jan 2024
+                        </span>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Maintenance records</span>
+                <span class="stat-value" th:text="${#lists.size(maintenances)}">0</span>
+                <span class="stat-hint">All logged services for this car</span>
+            </div>
+        </section>
+
+        <section class="cars-grid" th:if="${#lists.size(maintenances) > 0}">
+            <article class="car-card" th:each="m : ${maintenances}">
+                <header class="car-header">
+                    <div>
+                        <span class="meta-label">Service type</span>
+                        <span class="meta-value"
+                              th:text="${#strings.replace(m.type.name(), '_', ' ')}">OIL CHANGE</span>
+                    </div>
+                    <span class="status-tag"
+                          th:text="${#temporals.format(m.date, 'dd MMM yyyy')}">01 Jan 2024</span>
+                </header>
+
+                <div class="car-info">
+                    <div>
+                        <span class="meta-label">Mileage</span>
+                        <span class="meta-value" th:text="${m.mileage + ' km'}">50000 km</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Cost</span>
+                        <span class="meta-value"
+                              th:text="${m.cost != null ? m.cost + ' €' : '-'}">-</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Next due</span>
+                        <span class="meta-value"
+                              th:text="${m.nextDueDate != null ? #temporals.format(m.nextDueDate, 'dd MMM yyyy') : '-'}">
+                            -
+                        </span>
+                    </div>
+                </div>
+
+                <p class="stat-hint" th:text="${m.description}"
+                   style="margin-top: 8px;">Description</p>
+            </article>
+        </section>
+
+        <p th:if="${#lists.isEmpty(maintenances)}" style="margin-top: 1rem;">
+            No maintenance records for this car yet.
+        </p>
+    </section>
+
+    <aside class="sidebar">
+        <div class="tip-card">
+            <h2>Next steps</h2>
+            <ul>
+                <li>Use <strong>Log maintenance</strong> to add your first record.</li>
+                <li>Track important services like oil changes, tires and inspections.</li>
+            </ul>
+        </div>
+    </aside>
+</main>
+</body>
+</html>
+
+

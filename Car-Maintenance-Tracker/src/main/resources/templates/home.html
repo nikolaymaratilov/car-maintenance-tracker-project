@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Maintenance Tracker • Dashboard</title>
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+</head>
+<body>
+    <header class="nav">
+        <div class="brand">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#22d3ee" d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+            </svg>
+            Car Maintenance Tracker
+        </div>
+        <div class="welcome-container">
+            <div class="user-avatar" th:if="${!#strings.isEmpty(user.profilePictureUrl)}" >
+                <img th:src="${user.profilePictureUrl}" alt="Profile picture" />
+            </div>
+            <div class="user-avatar placeholder" th:if="${#strings.isEmpty(user.profilePictureUrl)}">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" stroke="#22d3ee" stroke-width="2" fill="none"/>
+                    <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <button class="welcome-btn">Welcome <span th:text="${user.username}"></span></button>
+            <a href="/profile" class="edit-profile-btn">Edit Profile</a>
+        </div>
+        <nav class="nav-links">
+            <a href="/home" class="active">Home</a>
+            <a href="/cars">Cars</a>
+            <a href="/maintenance">Maintenance</a>
+            <a href="/logout" class="primary">Logout</a>
+        </nav>
+    </header>
+
+    <main class="wrap">
+        <section class="main">
+            <div class="card">
+                <div class="hd">Overview</div>
+                <div class="bd">
+                    <div class="grid">
+                        <div class="stat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
+                                <path d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z" fill="#22d3ee"/>
+                            </svg>
+                            <small>Total Cars</small>
+                            <b th:text="${cars.size()}">2</b>
+                        </div>
+                        <div class="stat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" fill="#a78bfa"/>
+                            </svg>
+                            <small>Upcoming Services</small>
+                            <b th:text="${upcomingMaintenance}">0</b>
+                        </div>
+                        <div class="stat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#34d399"/>
+                            </svg>
+                            <small>Monthly Cost</small>
+                            <b th:text="${'$' + #numbers.formatDecimal(monthlyCost, 1, 2, 'POINT')}">$0.00</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 24px">
+                <div class="hd">Recent Maintenance</div>
+                <div class="bd">
+                    <div class="list" th:if="${#lists.size(recentMaintenances) > 0}">
+                        <div class="item" th:each="m, iterStat : ${recentMaintenances}">
+                            <div style="width: 40px; height: 40px; background: rgba(34,211,238,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="#22d3ee" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                </svg>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">
+                                    <span th:if="${m.car != null}"
+                                          th:text="${m.car.brand + ' ' + m.car.model}"></span>
+                                </div>
+                                <div class="meta">
+                                    <span th:text="${#temporals.format(m.date, 'yyyy-MM-dd')}">2025-01-01</span>
+                                    <span th:if="${m.mileage > 0}" th:text="' • ' + ${#numbers.formatInteger(m.mileage, 1, 'COMMA')} + ' km'"> • 0 km</span>
+                                </div>
+                            </div>
+                            <span class="tag" th:if="${m.cost != null}" th:text="${'$' + #numbers.formatDecimal(m.cost, 1, 2, 'POINT')}">$0</span>
+                            <span class="tag" th:if="${m.cost == null}">—</span>
+                        </div>
+                    </div>
+                    <p th:if="${#lists.isEmpty(recentMaintenances)}" style="color: var(--muted); padding: 16px;">
+                        No maintenance records yet. Log your first service to get started.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <aside class="side">
+            <div class="card">
+                <div class="hd">Quick Actions</div>
+                <div class="bd">
+                    <div class="quick">
+                        <a href="/new-car" class="btn">Add a car</a>
+                        <a href="/new-maintenance" class="btn">Log maintenance</a>
+                    </div>
+                    <div th:if="${user.getRole().getDisplayName() == 'Admin'}" style="margin-top: 12px;">
+                        <a href="/dashboard" class="btn" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1)); border: 1.5px solid #8b5cf6; color: #a78bfa; font-weight: 600;">
+                            Admin Dashboard
+                        </a>
+                    </div>
+                    <div style="height: 16px;"></div>
+                    <div class="note">Keep your maintenance logs up to date for accurate reminders and better cost tracking.</div>
+                </div>
+            </div>
+        </aside>
+    </main>
+</body>
+</html>
+
+

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard • Car Maintenance Tracker</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+</head>
+<body>
+    <header class="nav">
+        <div class="brand">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#22d3ee" d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+            </svg>
+            Car Maintenance Tracker
+        </div>
+        <div class="welcome-container">
+            <div class="user-avatar placeholder">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" stroke="#22d3ee" stroke-width="2" fill="none"/>
+                    <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <button class="welcome-btn">Admin Dashboard</button>
+            <a href="/profile" class="edit-profile-btn">Edit Profile</a>
+        </div>
+        <nav class="nav-links">
+            <a href="/home">Home</a>
+            <a href="/cars">Cars</a>
+            <a href="/maintenance">Maintenance</a>
+            <a href="/dashboard" class="active">Admin</a>
+            <a href="/logout" class="primary">Logout</a>
+        </nav>
+    </header>
+    <main class="wrap">
+        <section class="main">
+            <div class="card">
+                <div class="hd">System Overview</div>
+                <div class="bd" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('https://i.pinimg.com/1200x/37/fb/40/37fb409eb1477ada81dcc1e2780fbbc0.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; filter: brightness(0.2); z-index: 0;"></div>
+                    <div class="grid" style="position: relative; z-index: 1;">
+                        <div class="stat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
+                                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" fill="#22d3ee"/>
+                            </svg>
+                            <small>Total Users</small>
+                            <b th:text="${usersAndAdminsCount.get(0)}">0</b>
+                        </div>
+                        <div class="stat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
+                                <path d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z" fill="#a78bfa"/>
+                            </svg>
+                            <small>Total Cars</small>
+                            <b th:text="${cars.size()}">0</b>
+                        </div>
+                        <div class="stat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#34d399"/>
+                            </svg>
+                            <small>Total Maintenances</small>
+                            <b th:text="${maintenance.size()}">0</b>
+                        </div>
+                        <div class="stat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 8px; opacity: 0.8;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fbbf24"/>
+                            </svg>
+                            <small>Active Admins</small>
+                            <b th:text="${usersAndAdminsCount.get(1)}">0</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="side">
+            <div class="card">
+                <div class="hd">Quick Links</div>
+                <div class="bd">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <a href="/admin-users" class="btn" style="width: 100%; text-align: left;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" fill="#22d3ee"/>
+                            </svg>
+                            All Users
+                        </a>
+                        <a href="/admin-cars" class="btn" style="width: 100%; text-align: left;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                                <path d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z" fill="#a78bfa"/>
+                            </svg>
+                            All Cars
+                        </a>
+                        <a href="/admin-maintenances" class="btn" style="width: 100%; text-align: left;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#34d399"/>
+                            </svg>
+                            All Maintenances
+                        </a>
+                    </div>
+                    <div style="height: 16px;"></div>
+                    <div class="note" style="font-size: 12px; color: var(--muted); line-height: 1.5;">
+                        Use the admin panel to manage users, view all cars in the system, and configure maintenance types.
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+</body>
+</html>

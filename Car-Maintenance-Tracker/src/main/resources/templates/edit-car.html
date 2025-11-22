@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Maintenance Tracker • Edit Car</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/new-car.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+</head>
+<body>
+<header class="nav">
+    <div class="brand">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#22d3ee"
+                  d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+        </svg>
+        Car Maintenance Tracker
+    </div>
+    <nav class="nav-links">
+        <a href="/home">Home</a>
+        <a href="/cars" class="active">Cars</a>
+        <a href="/maintenance">Maintenance</a>
+        <a href="/logout" class="primary">Logout</a>
+    </nav>
+</header>
+
+<main class="wrap">
+    <section class="panel">
+        <div>
+            <h1>Edit car</h1>
+            <p>Update the details of your car to keep your garage accurate.</p>
+        </div>
+
+        <div class="card">
+            <section>
+                <h2>Editing tips</h2>
+                <ul>
+                    <li>Ensure the VIN matches your registration to avoid duplicates.</li>
+                    <li>Year should be the model year (e.g. 2024), not purchase date.</li>
+                </ul>
+            </section>
+            <img src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=720&h=480&fit=crop"
+                 alt="Mechanic checking a car" onerror="this.style.display='none'">
+        </div>
+    </section>
+
+    <section class="form-shell">
+        <form class="car-form"
+              th:action="@{'/cars/' + ${car.id}}"
+              th:method="post"
+              th:object="${car}">
+            <input type="hidden" name="_method" value="put"/>
+            <input type="hidden" name="_csrf" value="">
+
+            <div class="alert-warning" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+            <div class="field">
+                <label for="brand">Brand</label>
+                <input th:field="*{brand}" id="brand" name="brand" type="text" placeholder="Audi">
+            </div>
+
+            <div class="field">
+                <label for="model">Model</label>
+                <input th:field="*{model}" id="model" name="model" type="text" placeholder="A4 Quattro">
+            </div>
+
+            <div class="field">
+                <label for="year">Year</label>
+                <input th:field="*{year}" id="year" name="year" type="number" min="1900" max="2099" placeholder="2024">
+            </div>
+
+            <div class="field">
+                <label for="vin">VIN</label>
+                <input th:field="*{vin}" id="vin" name="vin" type="text" placeholder="WAUZZZF40NA123456"
+                       autocomplete="off">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Save changes</button>
+                <a class="btn ghost" th:href="@{'/cars/' + ${car.id}}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>
+
+
