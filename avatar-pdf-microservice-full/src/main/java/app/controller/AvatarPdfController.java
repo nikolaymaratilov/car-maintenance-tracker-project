@@ -1,4 +1,4 @@
-package com.example.avatarpdf.controller;
+package app.controller;
 
 import com.example.avatarpdf.dto.AvatarPdfCreateRequest;
 import com.example.avatarpdf.dto.AvatarPdfResponse;

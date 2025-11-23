@@ -1,4 +1,4 @@
-package com.example.avatarpdf.exception;
+package app.exception;
 
 public class PdfGenerationException extends RuntimeException {
     public PdfGenerationException(String message) { super(message); }

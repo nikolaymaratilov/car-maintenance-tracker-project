@@ -1,11 +1,11 @@
-package com.example.avatarpdf.service;
+package app.service;
 
-import com.example.avatarpdf.dto.AvatarPdfCreateRequest;
-import com.example.avatarpdf.dto.AvatarPdfResponse;
-import com.example.avatarpdf.dto.AvatarPdfUpdateRequest;
-import com.example.avatarpdf.entity.AvatarPdf;
-import com.example.avatarpdf.exception.ResourceNotFoundException;
-import com.example.avatarpdf.repository.AvatarPdfRepository;
+import app.dto.AvatarPdfCreateRequest;
+import app.dto.AvatarPdfResponse;
+import app.dto.AvatarPdfUpdateRequest;
+import app.entity.AvatarPdf;
+import app.exception.ResourceNotFoundException;
+import app.repository.AvatarPdfRepository;
 import com.example.avatarpdf.util.PdfGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

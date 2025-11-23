@@ -1,4 +1,4 @@
-package com.example.avatarpdf.dto;
+package app.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

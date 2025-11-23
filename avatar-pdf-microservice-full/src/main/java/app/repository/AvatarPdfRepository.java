@@ -1,6 +1,6 @@
-package com.example.avatarpdf.repository;
+package app.repository;
 
-import com.example.avatarpdf.entity.AvatarPdf;
+import app.entity.AvatarPdf;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

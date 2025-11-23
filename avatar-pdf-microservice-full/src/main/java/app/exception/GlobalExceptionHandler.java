@@ -1,4 +1,4 @@
-package com.example.avatarpdf.exception;
+package app.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
