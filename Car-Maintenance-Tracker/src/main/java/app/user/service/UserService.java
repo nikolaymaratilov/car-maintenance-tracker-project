@@ -153,9 +153,5 @@ public class UserService {
         return loginAttemptMessage;
     }
 
-    public void test(){
-
-        System.out.println("SoftUni");
-    }
-
+    //Testing a connection with gitHub
 }
