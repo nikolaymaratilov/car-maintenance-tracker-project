@@ -9,3 +9,4 @@ import java.util.UUID;
 public interface AvatarPdfRepository extends JpaRepository<AvatarPdf, UUID> {
     Optional<AvatarPdf> findByIdAndUserId(UUID id, UUID userId);
 }
+//test
