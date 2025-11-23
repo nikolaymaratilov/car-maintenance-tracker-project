@@ -1,10 +1,9 @@
 package app.controller;
-
-import com.example.avatarpdf.dto.AvatarPdfCreateRequest;
-import com.example.avatarpdf.dto.AvatarPdfResponse;
-import com.example.avatarpdf.dto.AvatarPdfUpdateRequest;
-import com.example.avatarpdf.entity.AvatarPdf;
-import com.example.avatarpdf.service.AvatarPdfService;
+import app.dto.AvatarPdfCreateRequest;
+import app.dto.AvatarPdfResponse;
+import app.dto.AvatarPdfUpdateRequest;
+import app.entity.AvatarPdf;
+import app.service.AvatarPdfService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
