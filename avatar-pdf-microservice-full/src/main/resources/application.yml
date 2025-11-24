@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/avatar_pdf_svc?createDatabaseIfNotExist=true
     username: root
-    password: root
+    password: nikixmar123
   jpa:
     hibernate:
       ddl-auto: update

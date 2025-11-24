@@ -1,65 +1,47 @@
-package com.example.avatarpdf.util;
+package app.util;
 
-import com.example.avatarpdf.exception.PdfGenerationException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 public class PdfGenerator {
 
-    private PdfGenerator() {}
+    private PdfGenerator() {
 
-    public static byte[] generateFromImageUrl(String imageUrl, String displayName) {
-        try (InputStream in = new URL(imageUrl).openStream()) {
-            byte[] imageBytes = in.readAllBytes();
-            return generate(imageBytes, displayName);
-        } catch (IOException e) {
-            throw new PdfGenerationException("Cannot download image from imageUrl.");
-        }
     }
 
-    private static byte[] generate(byte[] imageBytes, String displayName) {
-        if (imageBytes == null || imageBytes.length == 0) {
-            throw new PdfGenerationException("Image data is empty.");
-        }
+    public static byte[] createPdf(byte[] imageBytes, String displayName) throws IOException {
 
-        try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.A4);
-            doc.addPage(page);
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
 
-            PDImageXObject image = PDImageXObject.createFromByteArray(doc, imageBytes, "avatar");
-
-            float pageWidth = page.getMediaBox().getWidth();
-            float pageHeight = page.getMediaBox().getHeight();
+            PDImageXObject image = PDImageXObject.createFromByteArray(document, imageBytes, "avatar");
 
             float imgSize = 220f;
-            float x = (pageWidth - imgSize) / 2;
-            float y = (pageHeight - imgSize) / 2 + 60;
+            float x = 100f;
+            float y = 350f;
 
-            try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+            try (PDPageContentStream cs = new PDPageContentStream(document, page)) {
                 cs.drawImage(image, x, y, imgSize, imgSize);
 
-                cs.beginText();
-                cs.setFont(PDType1Font.HELVETICA_BOLD, 18);
-                String text = (displayName == null || displayName.isBlank()) ? "User avatar" : displayName;
-                cs.newLineAtOffset(72, y - 30);
-                cs.showText(text);
-                cs.endText();
+                if (displayName != null && !displayName.isBlank()) {
+                    cs.beginText();
+                    cs.setFont(PDType1Font.HELVETICA_BOLD, 18);
+                    cs.newLineAtOffset(x, y - 30);
+                    cs.showText(displayName);
+                    cs.endText();
+                }
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            doc.save(out);
+            document.save(out);
             return out.toByteArray();
-        } catch (IOException e) {
-            throw new PdfGenerationException("Failed to generate PDF.", e);
         }
     }
 }
