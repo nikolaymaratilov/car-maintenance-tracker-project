@@ -41,12 +41,6 @@ public interface AvatarPdfClient {
     @GetMapping("/api/avatar-pdfs/user/{userId}/latest")
     AvatarPdfResponse getLatestPdfForUser(@PathVariable("userId") UUID userId);
 
-    @GetMapping("/api/avatar-pdfs/user/{userId}/all")
-    java.util.List<AvatarPdfResponse> getAllPdfsForUser(@PathVariable("userId") UUID userId);
-
-    @DeleteMapping("/api/avatar-pdfs/{id}")
-    void deletePdf(@PathVariable("id") UUID id);
-
     @DeleteMapping("/api/avatar-pdfs/user/{userId}/latest")
     void deleteLatestPdfForUser(@PathVariable("userId") UUID userId);
 

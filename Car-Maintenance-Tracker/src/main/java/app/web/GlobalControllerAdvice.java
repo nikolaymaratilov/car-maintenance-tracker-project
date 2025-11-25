@@ -1,6 +1,10 @@
 package app.web;
 
 import app.exception.*;
+import app.security.UserData;
+import app.user.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -9,6 +13,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @ControllerAdvice
 public class GlobalControllerAdvice {
+
+    private final UserService userService;
+
+    public GlobalControllerAdvice(UserService userService) {
+        this.userService = userService;
+    }
 
     @ExceptionHandler(ValidationException.class)
     public String handleValidationException(ValidationException e, RedirectAttributes redirectAttributes){
@@ -64,9 +74,22 @@ public class GlobalControllerAdvice {
         return modelAndView;
     }
 
+    @ExceptionHandler(feign.FeignException.NotFound.class)
+    public ModelAndView handleFeignNotFoundException(feign.FeignException.NotFound e) {
+        ModelAndView modelAndView = new ModelAndView("pdf-info");
+        modelAndView.addObject("noPdf", true);
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserData) {
+            UserData userData = (UserData) authentication.getPrincipal();
+            modelAndView.addObject("user", userService.getById(userData.getUserId()));
+        }
+        
+        return modelAndView;
+    }
+
     @ExceptionHandler(Exception.class)
     public ModelAndView handleLeftOverExceptions(Exception e){
-
         return new ModelAndView("internal-server-error");
     }
 

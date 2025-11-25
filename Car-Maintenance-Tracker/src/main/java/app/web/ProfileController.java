@@ -71,8 +71,7 @@ public class ProfileController {
     @PostMapping("/profile/avatar/pdf")
     public ResponseEntity<byte[]> generateAvatarPdf(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("name") String name
-    ) {
+            @RequestParam("name") String name) {
         byte[] pdf = avatarPdfService.generatePdf(file, name);
 
         return ResponseEntity.ok()
