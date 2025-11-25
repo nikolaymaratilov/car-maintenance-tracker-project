@@ -12,129 +12,94 @@
     <meta name="color-scheme" content="dark">
 </head>
 <body>
-    <header class="nav">
-        <div class="brand">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#22d3ee" d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
-            </svg>
-            Car Maintenance Tracker
-        </div>
-        <div class="welcome-container">
-            <a href="/home" class="edit-profile-btn">Back to Home</a>
-        </div>
-        <nav class="nav-links">
-            <a href="/home">Home</a>
-            <a href="/cars">Cars</a>
-            <a href="/maintenance">Maintenance</a>
-            <a href="/logout" class="primary">Logout</a>
-        </nav>
-    </header>
+<header class="nav">
+    <div class="brand">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#22d3ee" d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+        </svg>
+        Car Maintenance Tracker
+    </div>
+    <div class="welcome-container">
+        <a href="/home" class="edit-profile-btn">Back to Home</a>
+    </div>
+    <nav class="nav-links">
+        <a href="/home">Home</a>
+        <a href="/cars">Cars</a>
+        <a href="/maintenance">Maintenance</a>
+        <a href="/logout" class="primary">Logout</a>
+    </nav>
+</header>
 
-    <main class="profile-container">
-        <div class="profile-card">
-            <div class="profile-header">
-                <div class="profile-picture-container">
-                    <div class="profile-picture-wrapper">
-                        <img id="profilePicturePreview" src="" alt="Profile Picture" class="profile-picture-img" style="display: none;">
-                        <div class="profile-picture-placeholder" id="profilePicturePlaceholder">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="8" r="4" stroke="#22d3ee" stroke-width="2" fill="none"/>
-                                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </div>
+<main class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h1>Edit Profile</h1>
+            <p class="subtitle">Update your account information</p>
+
+            <div class="profile-picture-container">
+                <div class="profile-picture-wrapper">
+                    <img id="profilePicturePreview" src="" alt="Profile Picture" class="profile-picture-img" style="display: none;">
+                    <div class="profile-picture-placeholder" id="profilePicturePlaceholder">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="8" r="4" stroke="#22d3ee" stroke-width="2" fill="none"/>
+                            <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
                     </div>
                 </div>
-                <h1>Edit Profile</h1>
-                <p class="subtitle">Update your account information</p>
             </div>
-            <form th:class="profile-form" th:action="@{/profile/edit}" th:method="POST" th:object="${editProfileRequest}">
 
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-
-
-                <div class="form-section">
-                    <h2>Account Information</h2>
-
-                    <div class="field">
-                        <label for="username">Username</label>
-                        <input th:field="*{username}" id="username" name="username" type="text" autocomplete="username" placeholder="Enter your username" value="">
-                        <p class="alert-warning" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error message</p>
-                    </div>
-
-                    <div class="field">
-                        <label for="email">Email</label>
-                        <input th:field="*{email}" id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" value="">
-                        <p class="alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error message</p>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h2>Change Password</h2>
-
-                    <div class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-                    <p class="section-note">Leave blank if you don't want to change your password</p>
-
-                    <div class="field">
-                        <label for="currentPassword">Current Password</label>
-                        <input th:field="*{currentPassword}" id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" placeholder="Enter current password">
-                        <p class="alert-warning" style="display: none;">Error message</p>
-                    </div>
-
-                    <div class="field">
-                        <label for="newPassword">New Password</label>
-                        <input th:field="*{newPassword}" id="newPassword" name="newPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters">
-                        <p class="alert-warning" style="display: none;">Error message</p>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="save-btn">Save Changes</button>
-                    <a href="/home" class="cancel-btn">Cancel</a>
-                </div>
-            </form>
         </div>
-    </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const profilePictureUrlInput = document.getElementById('profilePictureUrl');
-            const profilePicturePreview = document.getElementById('profilePicturePreview');
-            const profilePicturePlaceholder = document.getElementById('profilePicturePlaceholder');
+        <form th:class="profile-form" th:action="@{/profile/edit}" th:method="POST" th:object="${editProfileRequest}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            function updateProfilePicture(url) {
-                const trimmedUrl = url ? url.trim() : '';
+            <div class="form-section">
+                <h2>Account Information</h2>
 
-                if (!trimmedUrl) {
-                    profilePicturePreview.style.display = 'none';
-                    profilePicturePlaceholder.style.display = 'flex';
-                    profilePicturePreview.removeAttribute('src');
-                    return;
-                }
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input th:field="*{username}" id="username" name="username" type="text" autocomplete="username" placeholder="Enter your username">
+                    <p class="alert-warning" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error message</p>
+                </div>
 
-                profilePicturePreview.onload = function() {
-                    profilePicturePreview.style.display = 'block';
-                    profilePicturePlaceholder.style.display = 'none';
-                };
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input th:field="*{email}" id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+                    <p class="alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error message</p>
+                </div>
 
-                profilePicturePreview.onerror = function() {
-                    profilePicturePreview.style.display = 'none';
-                    profilePicturePlaceholder.style.display = 'flex';
-                };
+                <div class="field">
+                    <label for="profilePictureUrl">Profile Picture URL</label>
+                    <input th:field="*{profilePictureUrl}" id="profilePictureUrl" name="profilePictureUrl" type="url" placeholder="https://example.com/avatar.jpg">
+                    <p class="alert-warning" th:if="${#fields.hasErrors('profilePictureUrl')}" th:errors="*{profilePictureUrl}">Error message</p>
+                    <p class="section-note" style="margin-top: 5px; font-size: 0.85rem; color: #94a3b8;">Enter a URL to an image (e.g., from imgur, imgbb, or any image hosting service)</p>
+                </div>
+            </div>
 
-                profilePicturePreview.src = trimmedUrl;
-            }
+            <div class="form-section">
+                <h2>Change Password</h2>
 
-            if (profilePictureUrlInput) {
-                updateProfilePicture(profilePictureUrlInput.value);
+                <div class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+                <p class="section-note">Leave blank if you don't want to change your password</p>
 
-                profilePictureUrlInput.addEventListener('input', function(e) {
-                    updateProfilePicture(e.target.value);
-                });
-            }
-        });
-    </script>
+                <div class="field">
+                    <label for="currentPassword">Current Password</label>
+                    <input th:field="*{currentPassword}" id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" placeholder="Enter current password">
+                </div>
+
+                <div class="field">
+                    <label for="newPassword">New Password</label>
+                    <input th:field="*{newPassword}" id="newPassword" name="newPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="save-btn">Save Changes</button>
+                <a href="/home" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</main>
 
 </body>
 </html>
-

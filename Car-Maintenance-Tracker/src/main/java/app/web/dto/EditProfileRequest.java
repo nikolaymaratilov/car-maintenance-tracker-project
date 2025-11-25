@@ -2,9 +2,9 @@ package app.web.dto;
 
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 
 @Builder
 @Getter
@@ -25,6 +25,7 @@ public class EditProfileRequest {
     @Nullable
     private String newPassword;
 
-    @URL(message = "Invalid URL format")
+    @Nullable
+    @Pattern(regexp = "^$|^https?://.+", message = "Invalid URL format. Must be a valid HTTP/HTTPS URL or empty")
     private String profilePictureUrl;
 }

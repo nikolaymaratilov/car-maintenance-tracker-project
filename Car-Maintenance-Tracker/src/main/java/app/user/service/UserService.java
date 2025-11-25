@@ -75,6 +75,13 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
 
+        if (request.getProfilePictureUrl() != null) {
+            String trimmedUrl = request.getProfilePictureUrl().trim();
+            user.setProfilePictureUrl(trimmedUrl.isEmpty() ? "" : trimmedUrl);
+        } else {
+            user.setProfilePictureUrl("");
+        }
+
         boolean wantsToChangePassword =
                 request.getNewPassword() != null && !request.getNewPassword().isBlank();
 
@@ -152,6 +159,4 @@ public class UserService {
         }
         return loginAttemptMessage;
     }
-
-    //Testing a connection with gitHub
 }

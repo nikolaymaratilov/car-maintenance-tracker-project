@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Information • Car Maintenance Tracker</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+    <style>
+        .pdf-info-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 32px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .info-card h2 {
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(34,211,238,0.1), rgba(167,139,250,0.1));
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .cars-list, .maintenances-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .car-item, .maintenance-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .car-item:hover, .maintenance-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34,211,238,0.2);
+        }
+
+        .car-header, .maintenance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .car-title, .maintenance-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .car-details, .maintenance-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-dark);
+            transform: translateX(-4px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #0a0f1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34,211,238,0.3);
+        }
+    </style>
+</head>
+<body>
+<header class="nav">
+    <div class="brand">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#22d3ee" d="M7 15a2 2 0 1 1-4 0a2 2 0 0 1 4 0m14 0a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6.5 6.5l2.3-2.3A2 2 0 0 1 10.2 3h3.6a2 2 0 0 1 1.4.6l2.3 2.3l2.2 4.4A2 2 0 0 1 22 12v3a1 1 0 0 1-1 1h-1.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3a1 1 0 0 1-1-1v-2c0-.5.2-1 .6-1.4l2.2-2.2zM8 8h8l-1.2-2.4a1 1 0 0 0-.9-.6h-3.8a1 1 0 0 0-.7.3z"/>
+        </svg>
+        Car Maintenance Tracker
+    </div>
+    <div class="welcome-container">
+        <a href="/pdf/generate" class="edit-profile-btn">Back to PDF Generator</a>
+    </div>
+    <nav class="nav-links">
+        <a href="/home">Home</a>
+        <a href="/cars">Cars</a>
+        <a href="/maintenance">Maintenance</a>
+        <a href="/logout" class="primary">Logout</a>
+    </nav>
+</header>
+
+<main class="pdf-info-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <a href="/pdf/generate" class="back-btn">← Back to PDF Generator</a>
+        <form th:if="${noPdf != true && pdfInfo != null}" action="/pdf/delete-latest" method="post" style="margin: 0;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" class="btn" style="background: #ef4444; border-color: #ef4444;">
+                Delete This PDF
+            </button>
+        </form>
+    </div>
+
+    <div th:if="${noPdf}" class="info-card" style="text-align: center; padding: 60px 32px;">
+        <div style="font-size: 64px; margin-bottom: 24px;">📄</div>
+        <h2 style="color: var(--primary); margin-bottom: 16px;">No PDF Found</h2>
+        <p style="color: var(--muted); font-size: 16px; margin-bottom: 32px;">
+            You haven't generated any PDF files yet. Generate a PDF from your profile page to view it here.
+        </p>
+        <a href="/pdf/generate" class="btn">Go to PDF Generator</a>
+    </div>
+
+    <div th:if="${error}" class="info-card" style="text-align: center; padding: 60px 32px;">
+        <div style="font-size: 64px; margin-bottom: 24px;">⚠️</div>
+        <h2 style="color: #ef4444; margin-bottom: 16px;">Error</h2>
+        <p style="color: var(--muted); font-size: 16px; margin-bottom: 32px;" th:text="${error}">
+            An error occurred while fetching PDF information.
+        </p>
+        <a href="/pdf/generate" class="btn">Go to PDF Generator</a>
+    </div>
+
+    <div th:if="${noPdf != true && pdfInfo != null}" class="info-card">
+        <h2>PDF Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">PDF ID</span>
+                <span class="info-value" th:text="${pdfInfo.id}">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Display Name</span>
+                <span class="info-value" th:text="${pdfInfo.displayName}">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Generated At</span>
+                <span class="info-value" th:text="${pdfInfo.generatedAt}">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${noPdf != true && pdfInfo != null && pdfInfo.userProfileData != null}" class="info-card">
+        <h2>User Information</h2>
+        <div class="info-grid" th:if="${pdfInfo.userProfileData.userInfo != null}">
+            <div class="info-item">
+                <span class="info-label">Username</span>
+                <span class="info-value" th:text="${pdfInfo.userProfileData.userInfo.username}">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value" th:text="${pdfInfo.userProfileData.userInfo.email}">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Role</span>
+                <span class="info-value" th:text="${pdfInfo.userProfileData.userInfo.role}">-</span>
+            </div>
+            <div class="info-item" th:if="${pdfInfo.userProfileData.userInfo.createdOn != null}">
+                <span class="info-label">Created On</span>
+                <span class="info-value" th:text="${pdfInfo.userProfileData.userInfo.createdOn}">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${noPdf != true && pdfInfo != null}" class="info-card">
+        <h2>Statistics</h2>
+        <div class="info-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${pdfInfo.totalCars}">0</div>
+                <div class="stat-label">Total Cars</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${pdfInfo.totalMaintenances}">0</div>
+                <div class="stat-label">Total Maintenances</div>
+            </div>
+            <div class="stat-card" th:if="${pdfInfo.totalMaintenanceCost != null}">
+                <div class="stat-number" th:text="${'$' + #numbers.formatDecimal(pdfInfo.totalMaintenanceCost, 1, 2)}">$0.00</div>
+                <div class="stat-label">Total Cost</div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${noPdf != true && pdfInfo != null && pdfInfo.userProfileData != null && pdfInfo.userProfileData.cars != null && !pdfInfo.userProfileData.cars.isEmpty()}" class="info-card">
+        <h2>Cars (<span th:text="${pdfInfo.userProfileData.cars.size()}">0</span>)</h2>
+        <div class="cars-list">
+            <div class="car-item" th:each="car : ${pdfInfo.userProfileData.cars}">
+                <div class="car-header">
+                    <div class="car-title" th:text="${car.brand + ' ' + car.model + ' (' + car.year + ')'}">Car</div>
+                </div>
+                <div class="car-details">
+                    <div class="info-item">
+                        <span class="info-label">VIN</span>
+                        <span class="info-value" th:text="${car.vin}">-</span>
+                    </div>
+                    <div class="info-item" th:if="${car.joinedAt != null}">
+                        <span class="info-label">Added On</span>
+                        <span class="info-value" th:text="${car.joinedAt}">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Maintenance Count</span>
+                        <span class="info-value" th:text="${car.maintenanceCount}">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${noPdf != true && pdfInfo != null && pdfInfo.userProfileData != null && pdfInfo.userProfileData.maintenances != null && !pdfInfo.userProfileData.maintenances.isEmpty()}" class="info-card">
+        <h2>Maintenances (<span th:text="${pdfInfo.userProfileData.maintenances.size()}">0</span>)</h2>
+        <div class="maintenances-list">
+            <div class="maintenance-item" th:each="maintenance : ${pdfInfo.userProfileData.maintenances}">
+                <div class="maintenance-header">
+                    <div class="maintenance-title" th:text="${maintenance.carBrand + ' ' + maintenance.carModel}">Car</div>
+                </div>
+                <div class="maintenance-details">
+                    <div class="info-item">
+                        <span class="info-label">Type</span>
+                        <span class="info-value" th:text="${maintenance.type}">-</span>
+                    </div>
+                    <div class="info-item" th:if="${maintenance.date != null}">
+                        <span class="info-label">Date</span>
+                        <span class="info-value" th:text="${maintenance.date}">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Mileage</span>
+                        <span class="info-value" th:text="${maintenance.mileage + ' km'}">-</span>
+                    </div>
+                    <div class="info-item" th:if="${maintenance.cost != null}">
+                        <span class="info-label">Cost</span>
+                        <span class="info-value" th:text="${'$' + #numbers.formatDecimal(maintenance.cost, 1, 2)}">-</span>
+                    </div>
+                    <div class="info-item" th:if="${maintenance.nextDueDate != null}">
+                        <span class="info-label">Next Due Date</span>
+                        <span class="info-value" th:text="${maintenance.nextDueDate}">-</span>
+                    </div>
+                </div>
+                <div class="info-item" th:if="${maintenance.description != null && !#strings.isEmpty(maintenance.description)}" style="margin-top: 12px;">
+                    <span class="info-label">Description</span>
+                    <span class="info-value" th:text="${maintenance.description}">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
+

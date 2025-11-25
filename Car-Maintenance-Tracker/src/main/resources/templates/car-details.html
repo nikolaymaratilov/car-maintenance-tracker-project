@@ -21,7 +21,10 @@
         Car Maintenance Tracker
     </div>
     <div class="welcome-container">
-        <div class="user-avatar placeholder">
+        <div class="user-avatar" th:if="${!#strings.isEmpty(user.profilePictureUrl)}" >
+            <img th:src="${user.profilePictureUrl}" alt="Profile picture" />
+        </div>
+        <div class="user-avatar placeholder" th:if="${#strings.isEmpty(user.profilePictureUrl)}">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="12" cy="8" r="4" stroke="#22d3ee" stroke-width="2" fill="none"/>
                 <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"

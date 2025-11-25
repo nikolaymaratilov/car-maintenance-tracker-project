@@ -727,3 +727,110 @@ input::placeholder {
     }
 }
 
+.pdf-generator,
+.pdf-tools {
+    max-width: 500px;
+    margin: 24px auto;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: left;
+}
+
+.pdf-generator h3,
+.pdf-tools h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0 0 20px;
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+
+.pdf-generator form,
+.pdf-tools form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pdf-generator label,
+.pdf-tools label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.pdf-generator input[type="file"],
+.pdf-generator input[type="text"],
+.pdf-tools input[type="text"] {
+    background: rgba(11, 19, 39, 0.8);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    width: 100%;
+}
+
+.pdf-generator input[type="file"]:hover,
+.pdf-generator input[type="text"]:hover,
+.pdf-tools input[type="text"]:hover {
+    border-color: var(--border-light);
+    background: rgba(11, 19, 39, 1);
+}
+
+.pdf-generator input[type="file"]:focus,
+.pdf-generator input[type="text"]:focus,
+.pdf-tools input[type="text"]:focus {
+    border-color: var(--primary);
+    background: rgba(11, 19, 39, 1);
+    box-shadow: 
+        0 0 0 4px rgba(34,211,238,0.1),
+        0 0 20px rgba(34,211,238,0.1);
+    transform: translateY(-1px);
+}
+
+.pdf-generator button,
+.pdf-tools button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: #0a0f1a;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(34,211,238,0.3);
+    font-family: inherit;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.pdf-generator button:hover,
+.pdf-tools button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(34,211,238,0.4);
+}
+
+.pdf-generator button:active,
+.pdf-tools button:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .pdf-generator,
+    .pdf-tools {
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+}
+
