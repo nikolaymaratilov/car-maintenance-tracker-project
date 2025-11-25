@@ -12,7 +12,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -74,11 +73,9 @@ public class PdfGenerator {
             PageContext pageContext = new PageContext(document);
             float currentY = PAGE_HEIGHT - MARGIN;
 
-            // Title
             currentY = writeText(pageContext, "User Profile", currentY, 
                 PDType1Font.HELVETICA_BOLD, 24);
 
-            // User Avatar
             if (imageBytes != null && imageBytes.length > 0) {
                 try {
                     PDImageXObject image = PDImageXObject.createFromByteArray(document, imageBytes, "avatar");
@@ -87,11 +84,9 @@ public class PdfGenerator {
                     pageContext.getCurrentStream().drawImage(image, MARGIN, currentY - imgSize, imgSize, imgSize);
                     currentY -= imgSize + 20;
                 } catch (Exception e) {
-                    // If image fails to load, continue without it
                 }
             }
 
-            // User Information Section
             UserInfo userInfo = userProfileData.getUserInfo();
             if (userInfo != null) {
                 currentY = ensureSpace(pageContext, currentY, 100);
@@ -109,7 +104,6 @@ public class PdfGenerator {
                 currentY -= 10;
             }
 
-            // Statistics Section
             currentY = ensureSpace(pageContext, currentY, 80);
             currentY = addSection(pageContext, "Statistics", currentY);
             currentY = addTextLine(pageContext, "Total Cars: " + userProfileData.getTotalCars(), currentY);
@@ -121,7 +115,6 @@ public class PdfGenerator {
             }
             currentY -= 10;
 
-            // Cars Section
             List<CarInfo> cars = userProfileData.getCars();
             if (cars != null && !cars.isEmpty()) {
                 currentY = ensureSpace(pageContext, currentY, 150);
@@ -141,7 +134,6 @@ public class PdfGenerator {
                 currentY -= 10;
             }
 
-            // Maintenances Section
             List<MaintenanceInfo> maintenances = userProfileData.getMaintenances();
             if (maintenances != null && !maintenances.isEmpty()) {
                 currentY = ensureSpace(pageContext, currentY, 150);
@@ -172,7 +164,6 @@ public class PdfGenerator {
                 }
             }
 
-            // Generated timestamp
             if (userProfileData.getGeneratedAt() != null) {
                 currentY = ensureSpace(pageContext, currentY, 30);
                 currentY -= 20;
@@ -256,7 +247,6 @@ public class PdfGenerator {
     private static float addTextLine(PageContext pageContext, String text, float y, 
                                     PDType1Font font, float fontSize) throws IOException {
         PDPageContentStream cs = pageContext.getCurrentStream();
-        // Handle text wrapping
         String[] words = text.split(" ");
         StringBuilder line = new StringBuilder();
         float lineY = y;
@@ -266,7 +256,6 @@ public class PdfGenerator {
             float textWidth = font.getStringWidth(testLine) / 1000 * fontSize;
             
             if (textWidth > (PAGE_WIDTH - 2 * MARGIN) && line.length() > 0) {
-                // Draw current line
                 cs.beginText();
                 cs.setFont(font, fontSize);
                 cs.newLineAtOffset(MARGIN, lineY);
@@ -279,7 +268,6 @@ public class PdfGenerator {
             }
         }
 
-        // Draw remaining line
         if (line.length() > 0) {
             cs.beginText();
             cs.setFont(font, fontSize);

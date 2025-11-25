@@ -28,7 +28,6 @@ public class AvatarPdfMapper {
         response.setTotalMaintenanceCost(avatarPdf.getTotalMaintenanceCost());
         response.setGeneratedAt(avatarPdf.getGeneratedAt());
 
-        // Parse JSON if available
         if (avatarPdf.getUserProfileDataJson() != null && !avatarPdf.getUserProfileDataJson().isBlank()) {
             try {
                 UserProfileData userProfileData = objectMapper.readValue(
@@ -37,7 +36,6 @@ public class AvatarPdfMapper {
                 );
                 response.setUserProfileData(userProfileData);
             } catch (Exception e) {
-                // If parsing fails, continue without userProfileData
             }
         }
 

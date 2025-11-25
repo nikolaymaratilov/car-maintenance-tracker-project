@@ -1,12 +1,8 @@
 package app.web;
 
-import app.domain.AvatarPdf;
-import app.exception.PdfGenerationException;
 import app.service.AvatarPdfService;
 import app.web.dto.AvatarPdfResponse;
-import app.web.dto.UserProfileData;
 import app.web.mapper.AvatarPdfMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,70 +18,38 @@ public class AvatarPdfController {
 
     private final AvatarPdfService service;
     private final AvatarPdfMapper mapper;
-    private final ObjectMapper objectMapper;
 
-    public AvatarPdfController(AvatarPdfService service, AvatarPdfMapper mapper, ObjectMapper objectMapper) {
+    public AvatarPdfController(AvatarPdfService service, AvatarPdfMapper mapper) {
         this.service = service;
         this.mapper = mapper;
-        this.objectMapper = objectMapper;
     }
 
     @PostMapping(
             value = "/upload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_PDF_VALUE
-    )
+            produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> createPdfFromUpload(
             @RequestPart("file") MultipartFile file,
-            @RequestPart(value = "displayName", required = false) String displayName
-    ) {
-        try {
-            if (file == null || file.isEmpty()) {
-                return ResponseEntity.badRequest().build();
-            }
+            @RequestPart(value = "displayName", required = false) String displayName) {
 
-            AvatarPdf avatarPdf = service.createFromUpload(file, displayName);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=avatar.pdf")
-                    .body(avatarPdf.getPdfBytes());
-        } catch (PdfGenerationException e) {
-            throw e; // Let GlobalExceptionHandler handle it
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error in controller", e);
-        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=avatar.pdf")
+                .body(service.createFromUpload(file, displayName).getPdfBytes());
     }
 
     @PostMapping(
             value = "/upload-with-profile",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_PDF_VALUE
-    )
+            produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> createPdfFromUploadWithProfile(
             @RequestPart("file") MultipartFile file,
             @RequestPart(value = "displayName", required = false) String displayName,
-            @RequestPart("userProfileData") String userProfileDataJson
-    ) {
-        try {
-            if (file == null || file.isEmpty()) {
-                return ResponseEntity.badRequest().build();
-            }
-            
-            UserProfileData userProfileData = objectMapper.readValue(userProfileDataJson, UserProfileData.class);
-            AvatarPdf avatarPdf = service.createFromUploadWithUserData(file, displayName, userProfileData);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=user-profile.pdf")
-                    .body(avatarPdf.getPdfBytes());
-        } catch (PdfGenerationException e) {
-            throw e; // Let GlobalExceptionHandler handle it
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse user profile data JSON: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error in controller: " + e.getMessage(), e);
-        }
+            @RequestPart("userProfileData") String userProfileDataJson) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=user-profile.pdf")
+                .body(service.createFromUploadWithUserDataJson(file, displayName, userProfileDataJson).getPdfBytes());
     }
 
     @GetMapping("/{id}")
@@ -120,14 +84,7 @@ public class AvatarPdfController {
 
     @PostMapping("/user/{userId}/latest/delete")
     public ResponseEntity<Void> deleteLatestPdfForUserPost(@PathVariable UUID userId) {
-        try {
-            service.deleteLatestByUserId(userId);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            if (e.getMessage() != null && e.getMessage().contains("No PDF found")) {
-                return ResponseEntity.notFound().build();
-            }
-            throw e;
-        }
+        service.deleteLatestByUserId(userId);
+        return ResponseEntity.noContent().build();
     }
 }

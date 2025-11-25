@@ -17,7 +17,6 @@ public class AvatarPdf {
     @Column(columnDefinition = "LONGBLOB")
     private byte[] pdfBytes;
 
-    // User Information
     private UUID userId;
     private String username;
     private String email;
@@ -26,12 +25,10 @@ public class AvatarPdf {
     private LocalDateTime userCreatedOn;
     private LocalDateTime userUpdatedOn;
 
-    // Statistics
     private int totalCars;
     private int totalMaintenances;
     private java.math.BigDecimal totalMaintenanceCost;
 
-    // JSON stored user profile data (full details)
     @Lob
     @Column(columnDefinition = "TEXT")
     private String userProfileDataJson;
@@ -54,19 +51,9 @@ public class AvatarPdf {
     public String getDisplayName() {
         return displayName;
     }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public byte[] getPdfBytes() {
         return pdfBytes;
     }
-
-    public void setPdfBytes(byte[] pdfBytes) {
-        this.pdfBytes = pdfBytes;
-    }
-
     public UUID getUserId() {
         return userId;
     }
@@ -90,11 +77,6 @@ public class AvatarPdf {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
-
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
@@ -106,17 +88,8 @@ public class AvatarPdf {
     public void setRole(String role) {
         this.role = role;
     }
-
-    public LocalDateTime getUserCreatedOn() {
-        return userCreatedOn;
-    }
-
     public void setUserCreatedOn(LocalDateTime userCreatedOn) {
         this.userCreatedOn = userCreatedOn;
-    }
-
-    public LocalDateTime getUserUpdatedOn() {
-        return userUpdatedOn;
     }
 
     public void setUserUpdatedOn(LocalDateTime userUpdatedOn) {

@@ -62,19 +62,19 @@ public class AvatarPdfService {
 
     public AvatarPdf createFromUploadWithUserData(MultipartFile file, String displayName, UserProfileData userProfileData) {
         try {
-            // Convert UserProfileData to JSON
+            if (file == null || file.isEmpty()) {
+                throw new PdfGenerationException("File is null or empty");
+            }
+
             String userProfileDataJson = objectMapper.writeValueAsString(userProfileData);
 
-            // Generate PDF with comprehensive user data
             byte[] pdfBytes = PdfGenerator.createPdfWithUserData(
                     file.getBytes(),
                     userProfileData
             );
 
-            // Create AvatarPdf entity with all information
             AvatarPdf avatarPdf = new AvatarPdf(displayName, pdfBytes);
             
-            // Set user information
             if (userProfileData.getUserInfo() != null) {
                 avatarPdf.setUserId(userProfileData.getUserInfo().getUserId());
                 avatarPdf.setUsername(userProfileData.getUserInfo().getUsername());
@@ -85,12 +85,10 @@ public class AvatarPdfService {
                 avatarPdf.setUserUpdatedOn(userProfileData.getUserInfo().getUpdatedOn());
             }
 
-            // Set statistics
             avatarPdf.setTotalCars(userProfileData.getTotalCars());
             avatarPdf.setTotalMaintenances(userProfileData.getTotalMaintenances());
             avatarPdf.setTotalMaintenanceCost(userProfileData.getTotalMaintenanceCost());
             
-            // Store full JSON data
             avatarPdf.setUserProfileDataJson(userProfileDataJson);
             avatarPdf.setGeneratedAt(LocalDateTime.now());
 
@@ -98,6 +96,20 @@ public class AvatarPdfService {
 
         } catch (IOException e) {
             throw new PdfGenerationException("Failed to read or process uploaded file.", e);
+        }
+    }
+
+    public AvatarPdf createFromUploadWithUserDataJson(MultipartFile file, String displayName, String userProfileDataJson) {
+        try {
+            if (file == null || file.isEmpty()) {
+                throw new PdfGenerationException("File is null or empty");
+            }
+
+            UserProfileData userProfileData = objectMapper.readValue(userProfileDataJson, UserProfileData.class);
+            return createFromUploadWithUserData(file, displayName, userProfileData);
+
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new PdfGenerationException("Failed to parse user profile data JSON: " + e.getMessage(), e);
         }
     }
 
