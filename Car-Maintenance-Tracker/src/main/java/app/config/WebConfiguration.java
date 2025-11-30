@@ -14,34 +14,44 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfiguration implements WebMvcConfigurer {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .ignoringRequestMatchers("/register")
                 )
-                .authorizeHttpRequests(matcher -> matcher
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/","/register","/login").permitAll()
+                        .requestMatchers("/", "/register", "/login").permitAll()
+                        .requestMatchers("/dashboard").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .formLogin(formLogin -> formLogin
+                .formLogin(form -> form
                         .loginPage("/login")
-                        .failureHandler((request, response, exception) -> {
-                            if (exception instanceof DisabledException) {
-                                response.sendRedirect("/login?disabled=true");
+                        .failureHandler((req, res, ex) -> {
+                            if (ex instanceof DisabledException) {
+                                res.sendRedirect("/login?disabled=true");
                             } else {
-                                response.sendRedirect("/login?error=true");
+                                res.sendRedirect("/login?error=true");
                             }
                         })
-
-
-                        .defaultSuccessUrl("/home",true)
+                        .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler((request, response, exception) -> {
+                            String referer = request.getHeader("Referer");
+
+                            if (referer != null) {
+                                response.sendRedirect(referer);
+                            } else {
+                                response.sendRedirect("/home");
+                            }
+                        })
+                )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout","GET"))
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                         .logoutSuccessUrl("/")
                 );
 

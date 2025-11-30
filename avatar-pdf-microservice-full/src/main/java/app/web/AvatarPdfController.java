@@ -61,7 +61,6 @@ public class AvatarPdfController {
     public ResponseEntity<AvatarPdfResponse> getLatestPdfForUser(@PathVariable UUID userId) {
         return ResponseEntity.ok(mapper.toResponse(service.getLatestByUserId(userId)));
     }
-
     @GetMapping("/user/{userId}/all")
     public ResponseEntity<List<AvatarPdfResponse>> getAllPdfsForUser(@PathVariable UUID userId) {
         List<AvatarPdfResponse> responses = service.getAllByUserId(userId).stream()
