@@ -46,5 +46,8 @@ public interface AvatarPdfClient {
 
     @PostMapping("/api/avatar-pdfs/user/{userId}/latest/delete")
     void deleteLatestPdfForUserPost(@PathVariable("userId") UUID userId);
+
+    @DeleteMapping("/pdf/delete-old")
+    String deleteOldPdfs();
 }
 

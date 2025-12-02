@@ -15,6 +15,7 @@ import app.web.dto.EditProfileRequest;
 import app.web.dto.RegisterRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -159,4 +160,9 @@ public class UserService {
         }
         return loginAttemptMessage;
     }
+
+        @CacheEvict(value = "dashboardStats", allEntries = true)
+        public void refreshCache() {
+            System.out.println("Dashboard cache evicted.");
+        }
 }

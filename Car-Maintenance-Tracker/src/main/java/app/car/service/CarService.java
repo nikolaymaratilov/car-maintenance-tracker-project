@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class CarService {
     }
 
 
+    @Cacheable(value = "carsByUser", key = "#user.id")
     public List<Car> getCarsForUser(User user) {
         return carRepository.findAllByUserIdAndDeletedFalse(user.getId());
     }
@@ -44,6 +47,7 @@ public class CarService {
         return count;
     }
 
+    @CacheEvict(value = "carsByUser", key = "#user.id")
     public void createCar(Car car, User user) {
 
         if (car.getBrand().isBlank() || car.getModel().isBlank() || car.getVin().isBlank()){
@@ -124,5 +128,10 @@ public class CarService {
     public List<Car> getAll() {
 
         return carRepository.findAll();
+    }
+
+    @CacheEvict(value = "carsByUser", allEntries = true)
+    public void clearAllCarCache() {
+        System.out.println("Car cache cleared by scheduler.");
     }
 }

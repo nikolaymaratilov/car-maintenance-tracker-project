@@ -118,5 +118,4 @@ public class AvatarPdfService {
                 LocalDateTime.now()
         );
     }
-
 }

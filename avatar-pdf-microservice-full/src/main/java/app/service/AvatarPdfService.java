@@ -140,4 +140,15 @@ public class AvatarPdfService {
         repository.deleteById(latest.getId());
         logger.info("Deleted latest PDF with ID: {} for user: {}", latest.getId(), userId);
     }
+
+    public int deleteOldPdfs() {
+
+        LocalDateTime threshold = LocalDateTime.now().minusDays(30);
+
+        List<AvatarPdf> oldPdfs = repository.findAllByCreatedAtBefore(threshold);
+
+        repository.deleteAll(oldPdfs);
+
+        return oldPdfs.size();
+    }
 }

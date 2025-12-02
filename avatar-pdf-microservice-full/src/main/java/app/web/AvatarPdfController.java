@@ -86,4 +86,10 @@ public class AvatarPdfController {
         service.deleteLatestByUserId(userId);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/delete-old")
+    public ResponseEntity<String> deleteOldPdfs() {
+        int deleted = service.deleteOldPdfs();
+        return ResponseEntity.ok("Deleted old PDFs: " + deleted);
+    }
 }
