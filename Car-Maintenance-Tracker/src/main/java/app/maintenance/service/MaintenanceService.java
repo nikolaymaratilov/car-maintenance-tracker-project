@@ -16,9 +16,11 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import app.user.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class MaintenanceService {
     private final MaintenanceRepository maintenanceRepository;
@@ -79,13 +81,12 @@ public class MaintenanceService {
     }
 
     public void createMaintenance(Maintenance maintenance) {
-
         if (maintenance.getCar() == null || maintenance.getType() == null){
-
             throw MaintenanceCreateException.blankEntitiesForMaintenance();
         }
 
         maintenanceRepository.save(maintenance);
+        log.info("Successfully created maintenance with ID: {}", maintenance.getId());
     }
 
     public Maintenance getForUser(UUID maintenanceId, User user) {
@@ -120,6 +121,7 @@ public class MaintenanceService {
         existing.setDescription(updatedMaintenance.getDescription());
         existing.setCost(updatedMaintenance.getCost());
         existing.setNextDueDate(updatedMaintenance.getNextDueDate());
+        log.info("Successfully updated maintenance with ID: {} for user: {}", maintenanceId, user.getId());
     }
 
     public List<Maintenance> upcomingNext30Days(User user) {
@@ -187,19 +189,19 @@ public class MaintenanceService {
 
     @Transactional
     public void deleteMaintenanceForUser(UUID maintenanceId, User user) {
-
         maintenanceRepository.findById(maintenanceId).ifPresent(m -> {
             if (m.getCar() != null &&
                     m.getCar().getUser() != null &&
                     m.getCar().getUser().getId().equals(user.getId())) {
 
                 delete(m.getCar().getId(), maintenanceId);
+                log.info("Successfully deleted maintenance with ID: {} for user: {}", maintenanceId, user.getId());
             }
         });
     }
 
     public List<Maintenance> getAll() {
-
+        log.info("Retrieving all maintenances");
         return maintenanceRepository.findAll();
     }
 }

@@ -15,11 +15,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class CarService {
     private final CarRepository carRepository;
@@ -49,13 +51,13 @@ public class CarService {
 
     @CacheEvict(value = "carsByUser", key = "#user.id")
     public void createCar(Car car, User user) {
-
         if (car.getBrand().isBlank() || car.getModel().isBlank() || car.getVin().isBlank()){
             throw CarCreateException.requiredFieldsForCar(car);
         }
 
         car.setUser(user);
         carRepository.save(car);
+        log.info("Successfully created car with ID: {} for user: {}", car.getId(), user.getId());
     }
 
     public List<Car> filterCars(User user, String brand, String model, String search) {
@@ -89,6 +91,7 @@ public class CarService {
         Car car = getCarForUser(carId, user);
         car.setDeleted(true);
         carRepository.save(car);
+        log.info("Successfully deleted car with ID: {} for user: {}", carId, user.getId());
     }
 
     public Car getCarForUser(UUID carId, User user) {
@@ -108,6 +111,7 @@ public class CarService {
         existing.setModel(updatedCar.getModel());
         existing.setYear(updatedCar.getYear());
         existing.setVin(updatedCar.getVin());
+        log.info("Successfully updated car with ID: {} for user: {}", carId, user.getId());
     }
 
     public Map<String, Set<String>> getBrandModelsMap(List<Car> cars) {
@@ -132,6 +136,6 @@ public class CarService {
 
     @CacheEvict(value = "carsByUser", allEntries = true)
     public void clearAllCarCache() {
-        System.out.println("Car cache cleared by scheduler.");
+        log.info("Car cache cleared by scheduler");
     }
 }

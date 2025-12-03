@@ -16,9 +16,11 @@ import app.web.dto.RegisterRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -37,7 +39,6 @@ public class UserService {
 
     @Transactional
     public void createNewUser(RegisterRequest registerRequest) {
-
         List<String> errors = new ArrayList<>();
 
         if (!registerRequest.getPassword().equals(registerRequest.getRepeatPassword())) {
@@ -69,10 +70,10 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
+        log.info("Successfully created user with ID: {} and username: {}", user.getId(), user.getUsername());
     }
 
     public void updateProfile(User user, EditProfileRequest request) {
-
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
 
@@ -101,6 +102,7 @@ public class UserService {
 
         user.setUpdatedOn(LocalDateTime.now());
         userRepository.save(user);
+        log.info("Successfully updated profile for user: {}", user.getId());
     }
 
     public ArrayList<Integer> getAllUsers() {
@@ -140,6 +142,7 @@ public class UserService {
         }
         user.setUpdatedOn(LocalDateTime.now());
         userRepository.save(user);
+        log.info("Successfully switched role to {} for user: {}", user.getRole(), userId);
     }
 
     @Transactional
@@ -148,6 +151,7 @@ public class UserService {
         user.setEnabled(!user.isEnabled());
         user.setUpdatedOn(LocalDateTime.now());
         userRepository.save(user);
+        log.info("Successfully switched status to {} for user: {}", user.isEnabled(), userId);
     }
 
     public String resolveLoginMessage(String loginAttemptMessage, String error, boolean disabled) {
@@ -163,6 +167,6 @@ public class UserService {
 
         @CacheEvict(value = "dashboardStats", allEntries = true)
         public void refreshCache() {
-            System.out.println("Dashboard cache evicted.");
+            log.info("Dashboard cache evicted");
         }
 }

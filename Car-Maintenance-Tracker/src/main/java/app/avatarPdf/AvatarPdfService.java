@@ -13,6 +13,7 @@ import app.user.model.User;
 import app.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AvatarPdfService {
@@ -33,33 +35,42 @@ public class AvatarPdfService {
     private final MaintenanceService maintenanceService;
 
     public byte[] generatePdf(MultipartFile file, String displayName) {
+        log.info("Started generating PDF");
         return client.createPdf(file, displayName);
     }
 
     public byte[] generatePdfWithProfile(MultipartFile file, String displayName, UserProfileData userProfileData) {
+        log.info("Started generating PDF with profile");
         try {
             String userProfileDataJson = objectMapper.writeValueAsString(userProfileData);
             return client.createPdfWithProfile(file, displayName, userProfileDataJson);
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            log.error("Failed to serialize user profile data", e);
             throw new RuntimeException("Failed to serialize user profile data: " + e.getMessage(), e);
         } catch (Exception e) {
+            log.error("Failed to generate PDF with profile", e);
             throw new RuntimeException("Failed to generate PDF with profile: " + e.getMessage(), e);
         }
     }
 
     public AvatarPdfResponse getPdf(UUID id) {
+        log.info("Retrieving PDF with ID: {}", id);
         return client.getPdf(id);
     }
 
     public AvatarPdfResponse getLatestPdfForUser(UUID userId) {
+        log.info("Retrieving latest PDF for user: {}", userId);
         return client.getLatestPdfForUser(userId);
     }
 
     public void deleteLatestPdfForUser(UUID userId) {
+        log.info("Started deleting latest PDF for user: {}", userId);
         client.deleteLatestPdfForUserPost(userId);
+        log.info("Successfully deleted latest PDF for user: {}", userId);
     }
 
     public UserProfileData buildUserProfileData(UUID userId) {
+        log.info("Started building user profile data for user: {}", userId);
         User user = userService.getById(userId);
 
         UserInfo userInfo = new UserInfo(
