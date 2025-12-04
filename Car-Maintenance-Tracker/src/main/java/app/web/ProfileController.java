@@ -85,6 +85,4 @@ public class ProfileController {
     public AvatarPdfResponse viewPdfInfo(@PathVariable UUID id) {
         return avatarPdfService.getPdf(id);
     }
-
-
 }
