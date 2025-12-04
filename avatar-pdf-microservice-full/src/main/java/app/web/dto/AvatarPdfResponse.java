@@ -19,12 +19,6 @@ public class AvatarPdfResponse {
     private UserProfileData userProfileData;
 
     public AvatarPdfResponse() {
-
-    }
-
-    public AvatarPdfResponse(UUID id, String displayName) {
-        this.id = id;
-        this.displayName = displayName;
     }
 
     public UUID getId() {
