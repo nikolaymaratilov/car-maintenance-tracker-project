@@ -30,7 +30,6 @@ public class CarService {
         this.carRepository = cars;
     }
 
-
     @Cacheable(value = "carsByUser", key = "#user.id")
     public List<Car> getCarsForUser(User user) {
         return carRepository.findAllByUserIdAndDeletedFalse(user.getId());
@@ -61,7 +60,6 @@ public class CarService {
     }
 
     public List<Car> filterCars(User user, String brand, String model, String search) {
-
         List<Car> cars = getCarsForUser(user);
 
         return cars.stream()
@@ -130,7 +128,6 @@ public class CarService {
                 ));
     }
     public List<Car> getAll() {
-
         return carRepository.findAll();
     }
 

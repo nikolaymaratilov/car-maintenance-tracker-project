@@ -84,6 +84,7 @@ public class AvatarPdfService {
             
             avatarPdf.setUserProfileDataJson(userProfileDataJson);
             avatarPdf.setGeneratedAt(LocalDateTime.now());
+            avatarPdf.setCreatedAt(LocalDateTime.now());
 
             AvatarPdf saved = repository.save(avatarPdf);
             log.info("Successfully created PDF with user profile data, ID: {}", saved.getId());

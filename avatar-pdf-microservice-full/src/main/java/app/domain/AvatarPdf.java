@@ -36,12 +36,16 @@ public class AvatarPdf {
     @Column(nullable = true)
     private LocalDateTime generatedAt;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     public AvatarPdf() {}
 
     public AvatarPdf(String displayName, byte[] pdfBytes) {
         this.displayName = displayName;
         this.pdfBytes = pdfBytes;
         this.generatedAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 
     public UUID getId() {
@@ -134,5 +138,13 @@ public class AvatarPdf {
 
     public void setGeneratedAt(LocalDateTime generatedAt) {
         this.generatedAt = generatedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

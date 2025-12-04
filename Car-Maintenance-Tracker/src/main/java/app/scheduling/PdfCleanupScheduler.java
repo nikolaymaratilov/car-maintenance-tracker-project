@@ -1,9 +1,11 @@
 package app.scheduling;
 
 import app.avatarPdf.AvatarPdfClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class PdfCleanupScheduler {
 
@@ -16,6 +18,6 @@ public class PdfCleanupScheduler {
     @Scheduled(cron = "0 0 3 * * *")
     public void scheduledPdfCleanup() {
         String result = avatarPdfClient.deleteOldPdfs();
-        System.out.println("Scheduled PDF cleanup executed: " + result);
+        log.info("Scheduled PDF cleanup executed: {}", result);
     }
 }
